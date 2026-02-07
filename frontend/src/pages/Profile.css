@@ -1,0 +1,126 @@
+.profile {
+  padding: 20px 0;
+}
+
+.profile-title {
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+
+.profile-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+.profile-info,
+.profile-edit {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.profile-info h2,
+.profile-edit h2 {
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.info-group {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.info-label {
+  font-weight: bold;
+  width: 150px;
+  color: var(--light-text);
+}
+
+.info-value {
+  flex: 1;
+}
+
+.badges-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1;
+}
+
+.badge {
+  background-color: var(--accent);
+  color: var(--white);
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.no-badges {
+  color: var(--light-text);
+  font-style: italic;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.btn-save {
+  margin-top: 10px;
+  padding: 12px;
+  font-size: 16px;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-save:hover {
+  background-color: var(--dark-accent);
+}
+
+.btn-save:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-group {
+    flex-direction: column;
+  }
+  
+  .info-label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}

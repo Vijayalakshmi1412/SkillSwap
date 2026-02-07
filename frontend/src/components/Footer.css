@@ -1,0 +1,11 @@
+.footer {
+  background-color: var(--dark-accent);
+  color: var(--white);
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}

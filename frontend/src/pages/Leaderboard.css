@@ -1,0 +1,208 @@
+.leaderboard {
+  padding: 20px 0;
+}
+
+.leaderboard-title {
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.leaderboard-subtitle {
+  color: var(--light-text);
+  margin-bottom: 30px;
+}
+
+.leaderboard-container {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 30px;
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 120px 100px 200px 100px;
+  gap: 10px;
+  padding: 15px 0;
+  border-bottom: 2px solid #eee;
+  font-weight: bold;
+  color: var(--dark-accent);
+}
+
+.header-cell {
+  display: flex;
+  align-items: center;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 120px 100px 200px 100px;
+  gap: 10px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s;
+}
+
+.table-row:hover {
+  background-color: var(--background);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+}
+
+.rank-display {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--primary);
+  width: 50px;
+  text-align: center;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: bold;
+  color: var(--text);
+}
+
+.user-stats {
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.points-display,
+.swaps-display {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary);
+  text-align: center;
+  width: 100%;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 16px;
+  color: #ddd;
+}
+
+.star.filled {
+  color: #ffc107;
+}
+
+.rating-number {
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.badges-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.badge-list {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge {
+  font-size: 16px;
+}
+
+.badge-count {
+  font-size: 14px;
+  color: var(--light-text);
+  margin-left: 5px;
+}
+
+.no-badges {
+  color: var(--light-text);
+  font-style: italic;
+}
+
+.no-users {
+  text-align: center;
+  padding: 40px;
+  color: var(--light-text);
+  font-style: italic;
+}
+
+.leaderboard-info {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.leaderboard-info h2 {
+  font-size: 20px;
+  color: var(--primary);
+  margin-bottom: 15px;
+  margin-top: 20px;
+}
+
+.leaderboard-info h2:first-child {
+  margin-top: 0;
+}
+
+.leaderboard-info ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.leaderboard-info li {
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 60px 1fr 80px 70px 120px 70px;
+    gap: 5px;
+    font-size: 14px;
+  }
+  
+  .rank-display {
+    font-size: 16px;
+    width: 40px;
+  }
+  
+  .points-display,
+  .swaps-display {
+    font-size: 16px;
+  }
+  
+  .star {
+    font-size: 14px;
+  }
+  
+  .badge {
+    font-size: 14px;
+  }
+}

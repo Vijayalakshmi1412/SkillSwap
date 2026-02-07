@@ -1,0 +1,277 @@
+.reviews {
+  padding: 20px 0;
+}
+
+.reviews-title {
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 15px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--light-text);
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  color: var(--primary);
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.reviews-container {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.reviews-list,
+.pending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-card,
+.pending-card {
+  border: 1px solid #eee;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  transition: box-shadow 0.3s;
+}
+
+.review-card:hover,
+.pending-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.review-header,
+.pending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.review-header h3,
+.pending-header h3 {
+  font-size: 20px;
+  color: var(--primary);
+  margin: 0;
+}
+
+.review-date,
+.pending-date {
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.review-rating {
+  margin-bottom: 15px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 20px;
+  color: #ddd;
+}
+
+.star.filled {
+  color: #ffc107;
+}
+
+.review-comment {
+  margin-bottom: 15px;
+}
+
+.review-comment p {
+  margin: 0;
+  padding: 10px;
+  background-color: var(--background);
+  border-radius: var(--border-radius);
+  font-style: italic;
+}
+
+.review-swap {
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.pending-details {
+  margin-bottom: 20px;
+}
+
+.skill-exchange {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-label {
+  font-size: 14px;
+  color: var(--light-text);
+  margin-bottom: 5px;
+}
+
+.skill-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.pending-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-review {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-review:hover {
+  background-color: var(--dark-accent);
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 40px;
+  color: var(--light-text);
+  font-style: italic;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  color: var(--primary);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--light-text);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: var(--dark-accent);
+}
+
+.btn-secondary {
+  background-color: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: var(--dark-accent);
+}
+
+@media (max-width: 768px) {
+  .skill-exchange {
+    grid-template-columns: 1fr;
+  }
+}
