@@ -1,31 +1,33 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
 
-// Suppress Mongoose deprecation warning
 mongoose.set('strictQuery', false);
-
-// Routes
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
-const skillRoutes = require('./routes/skills');
-const swapRoutes = require('./routes/swaps');
-const reviewRoutes = require('./routes/reviews');
-const leaderboardRoutes = require('./routes/leaderboard');
 
 const app = express();
 
-// Middleware
+// Debug: Check if .env is loading
+console.log("Loaded MONGO_URI:", process.env.MONGO_URI);
+
 app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ MongoDB connected');
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is undefined. Check your .env file.");
+    }
+
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log('✅ MongoDB connected successfully');
   } catch (error) {
     console.error('❌ MongoDB connection failed:', error.message);
     process.exit(1);
@@ -34,21 +36,16 @@ const connectDB = async () => {
 
 connectDB();
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/skills', skillRoutes);
-app.use('/api/swaps', swapRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
-
-// Serve frontend (for production)
-app.use(express.static(path.join(__dirname, '../frontend/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-});
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/skills', require('./routes/skills'));
+app.use('/api/swaps', require('./routes/swaps'));
+app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/leaderboard', require('./routes/leaderboard'));
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

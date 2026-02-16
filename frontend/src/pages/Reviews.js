@@ -34,8 +34,9 @@ const Reviews = ({ user }) => {
             'Authorization': `Bearer ${token}`
           }
         });
+        let myReviewsData = [];
         if (myReviewsRes.ok) {
-          const myReviewsData = await myReviewsRes.json();
+          myReviewsData = await myReviewsRes.json();
           setReviewsGiven(myReviewsData);
         }
         

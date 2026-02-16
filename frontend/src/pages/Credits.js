@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Credits.css';
 
+const handleUseCredits = (amount) => {
+  // In a real app, this would make an API call to use credits
+  alert(`Using ${amount} credits for a premium feature. This would normally open a payment/confirmation flow.`);
+};
+
 const Credits = ({ user }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,11 +46,6 @@ const Credits = ({ user }) => {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const useCredits = (amount) => {
-    // In a real app, this would make an API call to use credits
-    alert(`Using ${amount} credits for a premium feature. This would normally open a payment/confirmation flow.`);
-  };
-
   if (loading) {
     return <div className="loading">Loading credits...</div>;
   }
@@ -82,7 +82,7 @@ const Credits = ({ user }) => {
             <div className="feature-cost">5 credits</div>
             <button 
               className="btn btn-feature"
-              onClick={() => useCredits(5)}
+              onClick={() => handleUseCredits(5)}
               disabled={user.credits < 5}
             >
               Use Credits
@@ -96,7 +96,7 @@ const Credits = ({ user }) => {
             <div className="feature-cost">10 credits</div>
             <button 
               className="btn btn-feature"
-              onClick={() => useCredits(10)}
+              onClick={() => handleUseCredits(10)}
               disabled={user.credits < 10}
             >
               Use Credits
@@ -110,7 +110,7 @@ const Credits = ({ user }) => {
             <div className="feature-cost">15 credits</div>
             <button 
               className="btn btn-feature"
-              onClick={() => useCredits(15)}
+              onClick={() => handleUseCredits(15)}
               disabled={user.credits < 15}
             >
               Use Credits
@@ -124,7 +124,7 @@ const Credits = ({ user }) => {
             <div className="feature-cost">Variable</div>
             <button 
               className="btn btn-feature"
-              onClick={() => useCredits(1)}
+              onClick={() => handleUseCredits(1)}
               disabled={user.credits < 1}
             >
               Send Gift
