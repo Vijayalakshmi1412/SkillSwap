@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const Login = ({ setUser }) => {
+const Login = ({ setUser, refreshUser }) => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -47,7 +47,8 @@ const Login = ({ setUser }) => {
       
       if (res.ok) {
         localStorage.setItem('token', data.token);
-        setUser(data);
+        if (refreshUser) await refreshUser();
+        else setUser(data);
         navigate('/dashboard');
       } else {
         setErrors({ server: data.message });

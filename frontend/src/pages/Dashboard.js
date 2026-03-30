@@ -63,25 +63,25 @@ const Dashboard = ({ user }) => {
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon">💰</div>
-          <div className="stat-value">{user.credits}</div>
+          <div className="stat-value">{user?.credits ?? 0}</div>
           <div className="stat-label">Credits</div>
         </div>
         
         <div className="stat-card">
           <div className="stat-icon">⭐</div>
-          <div className="stat-value">{user.skillPoints}</div>
+          <div className="stat-value">{user?.skillPoints ?? 0}</div>
           <div className="stat-label">Skill Points</div>
         </div>
         
         <div className="stat-card">
           <div className="stat-icon">🏆</div>
-          <div className="stat-value">{user.badges.length}</div>
+          <div className="stat-value">{(user?.badges || []).length}</div>
           <div className="stat-label">Badges Earned</div>
         </div>
         
         <div className="stat-card">
           <div className="stat-icon">✅</div>
-          <div className="stat-value">{user.completedSwaps}</div>
+          <div className="stat-value">{user?.completedSwaps ?? 0}</div>
           <div className="stat-label">Completed Swaps</div>
         </div>
       </div>
@@ -121,9 +121,9 @@ const Dashboard = ({ user }) => {
       
       <div className="dashboard-section">
         <h2 className="section-title">Your Badges</h2>
-        {user.badges.length > 0 ? (
+        {(user.badges || []).length > 0 ? (
           <div className="badges-container">
-            {user.badges.map((badge, index) => (
+            {(user.badges || []).map((badge, index) => (
               <div key={index} className="badge-item">
                 <div className="badge-icon">🏅</div>
                 <div className="badge-name">{badge}</div>
@@ -140,9 +140,9 @@ const Dashboard = ({ user }) => {
         <div className="skills-container">
           <div className="skill-group">
             <h3>Skills You Offer</h3>
-            {user.skillsOffered.length > 0 ? (
+            {(user.skillsOffered || []).length > 0 ? (
               <div className="skill-list">
-                {user.skillsOffered.map((skill, index) => (
+                {(user.skillsOffered || []).map((skill, index) => (
                   <div key={index} className="skill-tag">{skill}</div>
                 ))}
               </div>
@@ -153,9 +153,9 @@ const Dashboard = ({ user }) => {
           
           <div className="skill-group">
             <h3>Skills You Want</h3>
-            {user.skillsWanted.length > 0 ? (
+            {(user.skillsWanted || []).length > 0 ? (
               <div className="skill-list">
-                {user.skillsWanted.map((skill, index) => (
+                {(user.skillsWanted || []).map((skill, index) => (
                   <div key={index} className="skill-tag">{skill}</div>
                 ))}
               </div>

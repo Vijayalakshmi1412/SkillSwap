@@ -44,6 +44,9 @@ const updateUserProfile = async (req, res) => {
       skillPoints: updatedUser.skillPoints,
       credits: updatedUser.credits,
       badges: updatedUser.badges,
+      completedSwaps: updatedUser.completedSwaps,
+      averageRating: updatedUser.averageRating,
+      totalRatings: updatedUser.totalRatings,
     });
   } catch (error) {
     console.error(error);

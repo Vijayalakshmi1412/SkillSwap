@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Reviews.css';
 
-const Reviews = ({ user }) => {
+const Reviews = ({ user, refreshUser }) => {
   const [reviewsReceived, setReviewsReceived] = useState([]);
   const [reviewsGiven, setReviewsGiven] = useState([]);
   const [completedSwaps, setCompletedSwaps] = useState([]);
@@ -49,10 +49,13 @@ const Reviews = ({ user }) => {
         if (swapsRes.ok) {
           const swapsData = await swapsRes.json();
           const allSwaps = [...(swapsData.incoming || []), ...(swapsData.outgoing || [])];
-          const completedSwaps = allSwaps.filter(swap => 
-            swap.status === 'completed' && 
-            !myReviewsData.some(review => review.swap._id === swap._id)
-          );
+          const completedSwaps = allSwaps.filter(swap => {
+            if (swap.status !== 'completed') return false;
+            return !myReviewsData.some(review => {
+              const reviewSwapId = review.swap?._id || review.swap;
+              return reviewSwapId?.toString() === swap._id?.toString();
+            });
+          });
           setCompletedSwaps(completedSwaps);
         }
       } catch (err) {
@@ -114,10 +117,12 @@ const Reviews = ({ user }) => {
       if (res.ok) {
         setFormSuccess('Review submitted successfully!');
         setReviewsGiven([...reviewsGiven, data]);
-        
+
         // Remove the swap from completed swaps
         setCompletedSwaps(completedSwaps.filter(swap => swap._id !== selectedSwap._id));
-        
+
+        if (refreshUser) await refreshUser();
+
         setTimeout(() => {
           closeReviewForm();
         }, 2000);
@@ -197,7 +202,7 @@ const Reviews = ({ user }) => {
                   )}
                   
                   <div className="review-swap">
-                    Swap: {review.swap.requesterSkill} ↔ {review.swap.recipientSkill}
+                    Swap: {review.swap?.requesterSkill || 'N/A'} ↔ {review.swap?.recipientSkill || 'N/A'}
                   </div>
                 </div>
               ))
@@ -230,7 +235,7 @@ const Reviews = ({ user }) => {
                   )}
                   
                   <div className="review-swap">
-                    Swap: {review.swap.requesterSkill} ↔ {review.swap.recipientSkill}
+                    Swap: {review.swap?.requesterSkill || 'N/A'} ↔ {review.swap?.recipientSkill || 'N/A'}
                   </div>
                 </div>
               ))

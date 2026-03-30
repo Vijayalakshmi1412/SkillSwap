@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Profile.css';
 
-const Profile = ({ user, setUser }) => {
+const Profile = ({ user, setUser, refreshUser }) => {
   const [formData, setFormData] = useState({
     skillsOffered: '',
     skillsWanted: '',
@@ -70,7 +70,11 @@ const Profile = ({ user, setUser }) => {
       
       if (res.ok) {
         setSuccess('Profile updated successfully!');
-        setUser(data);
+        if (refreshUser) {
+          await refreshUser();
+        } else {
+          setUser(data);
+        }
       } else {
         setErrors({ server: data.message });
       }
@@ -106,13 +110,13 @@ const Profile = ({ user, setUser }) => {
           </div>
           <div className="info-group">
             <span className="info-label">Average Rating:</span>
-            <span className="info-value">{user.averageRating.toFixed(1)} / 5</span>
+            <span className="info-value">{(user.averageRating ?? 0).toFixed(1)} / 5</span>
           </div>
           <div className="info-group">
             <span className="info-label">Badges:</span>
             <div className="badges-list">
-              {user.badges.length > 0 ? (
-                user.badges.map((badge, index) => (
+              {(user.badges || []).length > 0 ? (
+                (user.badges || []).map((badge, index) => (
                   <span key={index} className="badge">🏅 {badge}</span>
                 ))
               ) : (

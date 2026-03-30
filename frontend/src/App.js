@@ -20,34 +20,40 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchUserProfile = async () => {
     const token = localStorage.getItem('token');
-    if (token) {
-      fetch('/api/users/profile', {
+    if (!token) return null;
+
+    try {
+      const res = await fetch('/api/users/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('Failed to authenticate');
-        }
-      })
-      .then(data => {
-        setUser(data);
-      })
-      .catch(err => {
-        console.error(err);
-        localStorage.removeItem('token');
-      })
-      .finally(() => {
-        setLoading(false);
       });
-    } else {
-      setLoading(false);
+
+      if (!res.ok) {
+        throw new Error('Failed to authenticate');
+      }
+
+      const data = await res.json();
+      setUser(data);
+      return data;
+    } catch (err) {
+      console.error(err);
+      localStorage.removeItem('token');
+      setUser(null);
+      return null;
     }
+  };
+
+  useEffect(() => {
+    const initializeUser = async () => {
+      setLoading(true);
+      await fetchUserProfile();
+      setLoading(false);
+    };
+
+    initializeUser();
   }, []);
 
   const logout = () => {
@@ -65,13 +71,13 @@ function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home user={user} />} />
-          <Route path="/register" element={<Register setUser={setUser} />} />
-          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register setUser={setUser} refreshUser={fetchUserProfile} />} />
+          <Route path="/login" element={<Login setUser={setUser} refreshUser={fetchUserProfile} />} />
           <Route 
             path="/dashboard" 
             element={
               <ProtectedRoute user={user}>
-                <Dashboard user={user} />
+                <Dashboard user={user} refreshUser={fetchUserProfile} />
               </ProtectedRoute>
             } 
           />
@@ -79,7 +85,7 @@ function App() {
             path="/profile" 
             element={
               <ProtectedRoute user={user}>
-                <Profile user={user} setUser={setUser} />
+                <Profile user={user} setUser={setUser} refreshUser={fetchUserProfile} />
               </ProtectedRoute>
             } 
           />
@@ -95,7 +101,7 @@ function App() {
             path="/swap-requests" 
             element={
               <ProtectedRoute user={user}>
-                <SwapRequests user={user} />
+                <SwapRequests user={user} refreshUser={fetchUserProfile} />
               </ProtectedRoute>
             } 
           />
@@ -103,7 +109,7 @@ function App() {
             path="/reviews" 
             element={
               <ProtectedRoute user={user}>
-                <Reviews user={user} />
+                <Reviews user={user} refreshUser={fetchUserProfile} />
               </ProtectedRoute>
             } 
           />
@@ -119,7 +125,7 @@ function App() {
             path="/credits" 
             element={
               <ProtectedRoute user={user}>
-                <Credits user={user} />
+                <Credits user={user} refreshUser={fetchUserProfile} />
               </ProtectedRoute>
             } 
           />

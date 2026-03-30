@@ -60,9 +60,16 @@ const createReview = async (req, res) => {
     reviewedUser.totalRatings = reviews.length;
     await reviewedUser.save();
 
-    // Populate user details
+    // Populate user details and swap details
     await review.populate('reviewer', 'username');
     await review.populate('reviewed', 'username');
+    await review.populate({
+      path: 'swap',
+      populate: [
+        { path: 'requester', select: 'username' },
+        { path: 'recipient', select: 'username' },
+      ],
+    });
 
     res.status(201).json(review);
   } catch (error) {
@@ -78,6 +85,14 @@ const getUserReviews = async (req, res) => {
 
     const reviews = await Review.find({ reviewed: userId })
       .populate('reviewer', 'username')
+      .populate('swap')
+      .populate({
+        path: 'swap',
+        populate: [
+          { path: 'requester', select: 'username' },
+          { path: 'recipient', select: 'username' },
+        ],
+      })
       .sort({ createdAt: -1 });
 
     res.json(reviews);
@@ -94,6 +109,14 @@ const getMyReviews = async (req, res) => {
 
     const reviews = await Review.find({ reviewer: userId })
       .populate('reviewed', 'username')
+      .populate('swap')
+      .populate({
+        path: 'swap',
+        populate: [
+          { path: 'requester', select: 'username' },
+          { path: 'recipient', select: 'username' },
+        ],
+      })
       .sort({ createdAt: -1 });
 
     res.json(reviews);

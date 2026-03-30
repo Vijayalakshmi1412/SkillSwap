@@ -57,7 +57,7 @@ const Credits = ({ user }) => {
       <div className="credits-overview">
         <div className="credits-balance">
           <h2>Current Balance</h2>
-          <div className="balance-amount">{user.credits}</div>
+          <div className="balance-amount">{user?.credits ?? 0}</div>
           <p className="balance-description">Credits can be used to request sessions with experts</p>
         </div>
         

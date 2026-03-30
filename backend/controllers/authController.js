@@ -37,9 +37,13 @@ const registerUser = async (req, res) => {
       skillsOffered: user.skillsOffered,
       skillsWanted: user.skillsWanted,
       availability: user.availability,
+      bio: user.bio,
       skillPoints: user.skillPoints,
       credits: user.credits,
       badges: user.badges,
+      completedSwaps: user.completedSwaps,
+      averageRating: user.averageRating,
+      totalRatings: user.totalRatings,
       token,
     });
   } catch (error) {
@@ -74,9 +78,13 @@ const loginUser = async (req, res) => {
       skillsOffered: user.skillsOffered,
       skillsWanted: user.skillsWanted,
       availability: user.availability,
+      bio: user.bio,
       skillPoints: user.skillPoints,
       credits: user.credits,
       badges: user.badges,
+      completedSwaps: user.completedSwaps,
+      averageRating: user.averageRating,
+      totalRatings: user.totalRatings,
       token,
     });
   } catch (error) {

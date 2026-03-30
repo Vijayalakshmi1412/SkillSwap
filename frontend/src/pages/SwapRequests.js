@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SwapRequests.css';
 
-const SwapRequests = ({ user }) => {
+const SwapRequests = ({ user, refreshUser }) => {
   const [swapRequests, setSwapRequests] = useState({
     incoming: [],
     outgoing: [],
@@ -114,6 +114,8 @@ const SwapRequests = ({ user }) => {
           incoming: updatedIncoming, 
           outgoing: updatedOutgoing 
         });
+
+        if (refreshUser) await refreshUser();
       } else {
         console.error('Failed to complete swap');
       }
