@@ -13,6 +13,7 @@ import SwapRequests from './pages/SwapRequests';
 import Reviews from './pages/Reviews';
 import Leaderboard from './pages/Leaderboard';
 import Credits from './pages/Credits';
+import SwapRoom from './pages/SwapRoom';
 import NotFound from './pages/NotFound';
 import './App.css';
 
@@ -126,6 +127,14 @@ function App() {
             element={
               <ProtectedRoute user={user}>
                 <Credits user={user} refreshUser={fetchUserProfile} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/swap-room/:swapId" 
+            element={
+              <ProtectedRoute user={user}>
+                <SwapRoom user={user} />
               </ProtectedRoute>
             } 
           />

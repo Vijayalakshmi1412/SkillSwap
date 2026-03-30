@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './SwapRequests.css';
 
 const SwapRequests = ({ user, refreshUser }) => {
@@ -49,9 +50,9 @@ const SwapRequests = ({ user, refreshUser }) => {
       if (res.ok) {
         const updatedSwap = await res.json();
         // Update the local state with meeting link and accepted status
-        const initialMeetingLink = updatedSwap.meetingLink || getMeetingLink(updatedSwap);
+        const meetingLink = updatedSwap.meetingLink || getMeetingLink(updatedSwap);
         const updatedIncoming = swapRequests.incoming.map(swap => 
-          swap._id === swapId ? { ...swap, status: 'accepted', meetingLink: initialMeetingLink } : swap
+          swap._id === swapId ? { ...swap, status: 'accepted', meetingLink } : swap
         );
         setSwapRequests({ ...swapRequests, incoming: updatedIncoming });
       } else {
@@ -105,12 +106,14 @@ const SwapRequests = ({ user, refreshUser }) => {
       });
       
       if (res.ok) {
-        // Update the local state
+        const updatedSwap = await res.json();
+
+        // Update the local state based on updated swap data
         const updatedIncoming = swapRequests.incoming.map(swap => 
-          swap._id === swapId ? { ...swap, status: 'completed' } : swap
+          swap._id === swapId ? updatedSwap : swap
         );
         const updatedOutgoing = swapRequests.outgoing.map(swap => 
-          swap._id === swapId ? { ...swap, status: 'completed' } : swap
+          swap._id === swapId ? updatedSwap : swap
         );
         setSwapRequests({ 
           incoming: updatedIncoming, 
@@ -133,17 +136,6 @@ const SwapRequests = ({ user, refreshUser }) => {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const getMeetingLink = (swap) => {
-    if (swap.meetingLink) return swap.meetingLink;
-    if (!swap._id) return null;
-
-    const id = swap._id.toString().replace(/[^a-zA-Z0-9]/g, '');
-    const part1 = (id.slice(0, 3) || 'aaa').padEnd(3, 'a');
-    const part2 = (id.slice(3, 7) || 'bbbb').padEnd(4, 'b');
-    const part3 = (id.slice(7, 10) || 'ccc').padEnd(3, 'c');
-    return `https://meet.google.com/${part1}-${part2}-${part3}`;
-  };
-
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending':
@@ -157,6 +149,12 @@ const SwapRequests = ({ user, refreshUser }) => {
       default:
         return '';
     }
+  };
+
+  const getMeetingLink = (swap) => {
+    if (swap.meetingLink) return swap.meetingLink;
+    if (swap._id) return `https://meet.jit.si/skillswap-${swap._id}`;
+    return 'https://meet.jit.si/skillswap-fallback';
   };
 
   if (loading) {
@@ -239,25 +237,39 @@ const SwapRequests = ({ user, refreshUser }) => {
                       </>
                     )}
                     
-                    {swap.status === 'accepted' && getMeetingLink(swap) && (
-                      <a
-                        href={getMeetingLink(swap)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-join"
-                      >
-                        Join Meeting
-                      </a>
-                    )}
-                    
                     {swap.status === 'accepted' && (
-                      <button 
-                        className="btn btn-complete"
-                        onClick={() => handleCompleteSwap(swap._id)}
-                        disabled={actionLoading}
-                      >
-                        Mark as Completed
-                      </button>
+                      <>
+                        <a
+                          href={`/swap-room/${swap._id}`}
+                          className="btn btn-join"
+                        >
+                          Enter Room
+                        </a>
+                        {swap.meetingLink && (
+                          <a
+                            href={swap.meetingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-join"
+                          >
+                            Join Meeting
+                          </a>
+                        )}
+                        <button 
+                          className="btn btn-complete"
+                          onClick={() => handleCompleteSwap(swap._id)}
+                          disabled={
+                            actionLoading ||
+                            (user._id === swap.requester._id && swap.requesterCompleted) ||
+                            (user._id === swap.recipient._id && swap.recipientCompleted)
+                          }
+                        >
+                          {user._id === swap.requester._id
+                            ? (swap.requesterCompleted ? 'You marked completed' : 'Mark Skill Taught')
+                            : (swap.recipientCompleted ? 'You marked completed' : 'Mark Skill Learned')
+                          }
+                        </button>
+                      </>
                     )}
                     
                     {swap.status === 'completed' && (
@@ -314,24 +326,39 @@ const SwapRequests = ({ user, refreshUser }) => {
                   </div>
                   
                   <div className="request-actions">
-                    {swap.status === 'accepted' && getMeetingLink(swap) && (
-                      <a
-                        href={getMeetingLink(swap)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-join"
-                      >
-                        Join Meeting
-                      </a>
-                    )}
                     {swap.status === 'accepted' && (
-                      <button 
-                        className="btn btn-complete"
-                        onClick={() => handleCompleteSwap(swap._id)}
-                        disabled={actionLoading}
-                      >
-                        Mark as Completed
-                      </button>
+                      <>
+                        <a
+                          href={`/swap-room/${swap._id}`}
+                          className="btn btn-join"
+                        >
+                          Enter Room
+                        </a>
+                        {swap.meetingLink && (
+                          <a
+                            href={swap.meetingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-join"
+                          >
+                            Join Meeting
+                          </a>
+                        )}
+                        <button 
+                          className="btn btn-complete"
+                          onClick={() => handleCompleteSwap(swap._id)}
+                          disabled={
+                            actionLoading ||
+                            (user._id === swap.requester._id && swap.requesterCompleted) ||
+                            (user._id === swap.recipient._id && swap.recipientCompleted)
+                          }
+                        >
+                          {user._id === swap.requester._id
+                            ? (swap.requesterCompleted ? 'You marked completed' : 'Mark Skill Taught')
+                            : (swap.recipientCompleted ? 'You marked completed' : 'Mark Skill Learned')
+                          }
+                        </button>
+                      </>
                     )}
                     
                     {swap.status === 'completed' && (

@@ -1,0 +1,42 @@
+.swap-room {
+  max-width: 980px;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.swap-room h1 {
+  margin-bottom: 0.75rem;
+}
+
+.meeting-actions {
+  margin-bottom: 0.75rem;
+}
+
+.btn {
+  padding: 0.55rem 0.9rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: #1d4ed8;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-back {
+  background: #4b5563;
+}
+
+.swap-room-error,
+.swap-room-empty,
+.swap-room-loading {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+}

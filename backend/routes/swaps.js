@@ -2,6 +2,7 @@ const express = require('express');
 const {
   createSwapRequest,
   getSwapRequests,
+  getSwapById,
   acceptSwapRequest,
   rejectSwapRequest,
   completeSwap,
@@ -14,6 +15,9 @@ router.post('/', auth, createSwapRequest);
 
 // Get all swap requests for the current user (protected)
 router.get('/', auth, getSwapRequests);
+
+// Get single swap by ID (protected)
+router.get('/:swapId', auth, getSwapById);
 
 // Accept a swap request (protected)
 router.put('/:swapId/accept', auth, acceptSwapRequest);

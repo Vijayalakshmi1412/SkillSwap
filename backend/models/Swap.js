@@ -28,6 +28,14 @@ const swapSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  requesterCompleted: {
+    type: Boolean,
+    default: false,
+  },
+  recipientCompleted: {
+    type: Boolean,
+    default: false,
+  },
   message: {
     type: String,
     default: '',

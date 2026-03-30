@@ -85,6 +85,35 @@ const getSwapRequests = async (req, res) => {
   }
 };
 
+// Get single swap by ID
+const getSwapById = async (req, res) => {
+  try {
+    const { swapId } = req.params;
+    const userId = req.user._id;
+
+    const swap = await Swap.findById(swapId)
+      .populate('requester', 'username')
+      .populate('recipient', 'username');
+
+    if (!swap) {
+      return res.status(404).json({ message: 'Swap not found' });
+    }
+
+    // If requester/recipient are populated objects, compare _id; if plain ObjectId, they still have .toString()
+    const requesterId = swap.requester?._id ? swap.requester._id.toString() : swap.requester.toString();
+    const recipientId = swap.recipient?._id ? swap.recipient._id.toString() : swap.recipient.toString();
+
+    if (requesterId !== userId.toString() && recipientId !== userId.toString()) {
+      return res.status(401).json({ message: 'Not authorized to view this swap' });
+    }
+
+    res.json(swap);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Accept a swap request
 const acceptSwapRequest = async (req, res) => {
   try {
@@ -102,15 +131,12 @@ const acceptSwapRequest = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized to accept this swap' });
     }
 
-    // Generate Google Meet link and update swap status
-    const generateMeetCode = () => {
-      const chars = 'abcdefghijklmnopqrstuvwxyz';
-      const pick = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-      return `${pick(3)}-${pick(4)}-${pick(3)}`;
-    };
-    const meetingCode = generateMeetCode();
-    swap.meetingLink = `https://meet.google.com/${meetingCode}`;
+    // Generate Jitsi meeting link and update swap status
+    const meetingLink = `https://meet.jit.si/skillswap-${swap._id}`;
+    swap.meetingLink = meetingLink;
     swap.status = 'accepted';
+    swap.requesterCompleted = false;
+    swap.recipientCompleted = false;
     await swap.save();
 
     // Populate user details
@@ -178,47 +204,45 @@ const completeSwap = async (req, res) => {
       return res.status(400).json({ message: 'Swap must be accepted before it can be completed' });
     }
 
-    // Update swap status
-    swap.status = 'completed';
-    swap.completedDate = Date.now();
+    // Dual completion workflow
+    if (swap.requester.toString() === userId.toString()) {
+      swap.requesterCompleted = true;
+    } else if (swap.recipient.toString() === userId.toString()) {
+      swap.recipientCompleted = true;
+    }
+
+    // Complete fully only when both users confirm
+    if (swap.requesterCompleted && swap.recipientCompleted) {
+      if (swap.status !== 'completed') {
+        swap.status = 'completed';
+        swap.completedDate = Date.now();
+
+        const requester = await User.findById(swap.requester);
+        const recipient = await User.findById(swap.recipient);
+
+        requester.skillPoints += 10;
+        requester.credits += 5;
+        requester.completedSwaps += 1;
+
+        recipient.skillPoints += 10;
+        recipient.credits += 5;
+        recipient.completedSwaps += 1;
+
+        const applyBadge = (user) => {
+          if (user.completedSwaps === 1) user.badges.push('First Swap');
+          if (user.completedSwaps === 5) user.badges.push('Skill Swapper');
+          if (user.completedSwaps === 10) user.badges.push('Master Exchanger');
+        };
+
+        applyBadge(requester);
+        applyBadge(recipient);
+
+        await requester.save();
+        await recipient.save();
+      }
+    }
+
     await swap.save();
-
-    // Update user stats
-    const requester = await User.findById(swap.requester);
-    const recipient = await User.findById(swap.recipient);
-
-    requester.skillPoints += 10;
-    requester.credits += 5;
-    requester.completedSwaps += 1;
-    
-    // Check for new badges
-    if (requester.completedSwaps === 1) {
-      requester.badges.push('First Swap');
-    }
-    if (requester.completedSwaps === 5) {
-      requester.badges.push('Skill Swapper');
-    }
-    if (requester.completedSwaps === 10) {
-      requester.badges.push('Master Exchanger');
-    }
-
-    recipient.skillPoints += 10;
-    recipient.credits += 5;
-    recipient.completedSwaps += 1;
-    
-    // Check for new badges
-    if (recipient.completedSwaps === 1) {
-      recipient.badges.push('First Swap');
-    }
-    if (recipient.completedSwaps === 5) {
-      recipient.badges.push('Skill Swapper');
-    }
-    if (recipient.completedSwaps === 10) {
-      recipient.badges.push('Master Exchanger');
-    }
-
-    await requester.save();
-    await recipient.save();
 
     // Populate user details
     await swap.populate('requester', 'username');
@@ -234,6 +258,7 @@ const completeSwap = async (req, res) => {
 module.exports = {
   createSwapRequest,
   getSwapRequests,
+  getSwapById,
   acceptSwapRequest,
   rejectSwapRequest,
   completeSwap,
