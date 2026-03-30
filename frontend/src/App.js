@@ -131,7 +131,7 @@ function App() {
             } 
           />
           <Route 
-            path="/swap-room/:swapId" 
+            path="/swap-room/:id" 
             element={
               <ProtectedRoute user={user}>
                 <SwapRoom user={user} />

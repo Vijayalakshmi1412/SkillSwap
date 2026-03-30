@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import './SwapRoom.css';
 
 const SwapRoom = ({ user }) => {
-  const { swapId } = useParams();
+  const { id: swapId } = useParams();
   const [swap, setSwap] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -19,15 +19,27 @@ const SwapRoom = ({ user }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        const contentType = res.headers.get('content-type');
+
         if (!res.ok) {
-          const errorData = await res.json();
+          const errorText = contentType && contentType.includes('application/json')
+            ? await res.json().then(obj => obj.message || JSON.stringify(obj))
+            : await res.text();
+
           if (res.status === 401) {
             setError('Not authorized for this swap room. Please return to Swap Requests.');
           } else if (res.status === 404) {
             setError('Swap not found. It may have been deleted or canceled.');
           } else {
-            setError(errorData.message || 'Unable to load swap room. Please try again.');
+            setError(errorText || 'Unable to load swap room. Please try again.');
           }
+          setSwap(null);
+          return;
+        }
+
+        if (!contentType || !contentType.includes('application/json')) {
+          const invalidText = await res.text();
+          setError(`Invalid API response, expected JSON. Received: ${invalidText.slice(0, 200)}`);
           setSwap(null);
           return;
         }
@@ -35,8 +47,8 @@ const SwapRoom = ({ user }) => {
         const data = await res.json();
         setSwap(data);
       } catch (err) {
-        setError('Unable to load swap room');
         console.error(err);
+        setError(err.message || 'Unable to load swap room');
       } finally {
         setLoading(false);
       }

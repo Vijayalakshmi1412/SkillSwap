@@ -62,18 +62,7 @@ const getSwapRequests = async (req, res) => {
       .populate('recipient', 'username')
       .sort({ createdAt: -1 });
 
-    // Ensure accepted swaps have meeting links (fallback for older data)
-    const ensureMeetingLink = async (swap) => {
-      if (swap.status === 'accepted' && !swap.meetingLink) {
-        const chars = 'abcdefghijklmnopqrstuvwxyz';
-        const pick = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-        const code = `${pick(3)}-${pick(4)}-${pick(3)}`;
-        swap.meetingLink = `https://meet.google.com/${code}`;
-        await swap.save();
-      }
-    };
-
-    await Promise.all([...incomingRequests, ...outgoingRequests].map(ensureMeetingLink));
+    // No meeting link generation here; meeting links come from accept route only
 
     res.json({
       incoming: incomingRequests,
@@ -88,10 +77,10 @@ const getSwapRequests = async (req, res) => {
 // Get single swap by ID
 const getSwapById = async (req, res) => {
   try {
-    const { swapId } = req.params;
+    const { id } = req.params;
     const userId = req.user._id;
 
-    const swap = await Swap.findById(swapId)
+    const swap = await Swap.findById(id)
       .populate('requester', 'username')
       .populate('recipient', 'username');
 
@@ -105,6 +94,10 @@ const getSwapById = async (req, res) => {
 
     if (requesterId !== userId.toString() && recipientId !== userId.toString()) {
       return res.status(401).json({ message: 'Not authorized to view this swap' });
+    }
+
+    if (swap.status !== 'accepted' && swap.status !== 'completed') {
+      return res.status(400).json({ message: 'Swap not active yet' });
     }
 
     res.json(swap);

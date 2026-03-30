@@ -239,12 +239,12 @@ const SwapRequests = ({ user, refreshUser }) => {
                     
                     {swap.status === 'accepted' && (
                       <>
-                        <a
-                          href={`/swap-room/${swap._id}`}
+                        <Link
+                          to={`/swap-room/${swap._id}`}
                           className="btn btn-join"
                         >
                           Enter Room
-                        </a>
+                        </Link>
                         {swap.meetingLink && (
                           <a
                             href={swap.meetingLink}
@@ -328,12 +328,12 @@ const SwapRequests = ({ user, refreshUser }) => {
                   <div className="request-actions">
                     {swap.status === 'accepted' && (
                       <>
-                        <a
-                          href={`/swap-room/${swap._id}`}
+                        <Link
+                          to={`/swap-room/${swap._id}`}
                           className="btn btn-join"
                         >
                           Enter Room
-                        </a>
+                        </Link>
                         {swap.meetingLink && (
                           <a
                             href={swap.meetingLink}
