@@ -35,6 +35,9 @@ const Navbar = ({ user, logout }) => {
                 <Link to="/swap-requests" className="navbar-link">Requests</Link>
               </li>
               <li className="navbar-item">
+                <Link to="/reviews" className="navbar-link">Reviews</Link>
+              </li>
+              <li className="navbar-item">
                 <Link to="/leaderboard" className="navbar-link">Leaderboard</Link>
               </li>
               <li className="navbar-item">
