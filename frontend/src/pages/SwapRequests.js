@@ -49,8 +49,9 @@ const SwapRequests = ({ user, refreshUser }) => {
       if (res.ok) {
         const updatedSwap = await res.json();
         // Update the local state with meeting link and accepted status
+        const initialMeetingLink = updatedSwap.meetingLink || getMeetingLink(updatedSwap);
         const updatedIncoming = swapRequests.incoming.map(swap => 
-          swap._id === swapId ? { ...swap, status: 'accepted', meetingLink: updatedSwap.meetingLink } : swap
+          swap._id === swapId ? { ...swap, status: 'accepted', meetingLink: initialMeetingLink } : swap
         );
         setSwapRequests({ ...swapRequests, incoming: updatedIncoming });
       } else {
@@ -130,6 +131,17 @@ const SwapRequests = ({ user, refreshUser }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getMeetingLink = (swap) => {
+    if (swap.meetingLink) return swap.meetingLink;
+    if (!swap._id) return null;
+
+    const id = swap._id.toString().replace(/[^a-zA-Z0-9]/g, '');
+    const part1 = (id.slice(0, 3) || 'aaa').padEnd(3, 'a');
+    const part2 = (id.slice(3, 7) || 'bbbb').padEnd(4, 'b');
+    const part3 = (id.slice(7, 10) || 'ccc').padEnd(3, 'c');
+    return `https://meet.google.com/${part1}-${part2}-${part3}`;
   };
 
   const getStatusClass = (status) => {
@@ -227,9 +239,9 @@ const SwapRequests = ({ user, refreshUser }) => {
                       </>
                     )}
                     
-                    {swap.status === 'accepted' && swap.meetingLink && (
+                    {swap.status === 'accepted' && getMeetingLink(swap) && (
                       <a
-                        href={swap.meetingLink}
+                        href={getMeetingLink(swap)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-join"
@@ -302,9 +314,9 @@ const SwapRequests = ({ user, refreshUser }) => {
                   </div>
                   
                   <div className="request-actions">
-                    {swap.status === 'accepted' && swap.meetingLink && (
+                    {swap.status === 'accepted' && getMeetingLink(swap) && (
                       <a
-                        href={swap.meetingLink}
+                        href={getMeetingLink(swap)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-join"
