@@ -3,13 +3,20 @@ import { useParams, Link } from 'react-router-dom';
 import './SwapRoom.css';
 
 const SwapRoom = ({ user }) => {
-  const { id: swapId } = useParams();
+  const params = useParams();
+  const swapId = params.id || params.swapId;
   const [swap, setSwap] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchSwap = async () => {
+      if (!swapId) {
+        setError('Missing swap ID in URL.');
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError('');
 
@@ -88,13 +95,13 @@ const SwapRoom = ({ user }) => {
       <h1>Swap Room</h1>
       <p>Status: <strong>{swap.status}</strong></p>
       <p>
-        You are in a session with <strong>{swap.requester.username === user?.username ? swap.recipient.username : swap.requester.username}</strong>
+        You are in a session with <strong>{otherUser}</strong>
       </p>
       <p>
-        Skill to teach: <strong>{swap.requester.username === user?.username ? swap.requesterSkill : swap.recipientSkill}</strong>
+        Skill to teach: <strong>{yourTeachingSkill}</strong>
       </p>
       <p>
-        Skill to learn: <strong>{swap.requester.username === user?.username ? swap.recipientSkill : swap.requesterSkill}</strong>
+        Skill to learn: <strong>{yourLearningSkill}</strong>
       </p>
       {swap.meetingLink && (
         <div className="meeting-actions">

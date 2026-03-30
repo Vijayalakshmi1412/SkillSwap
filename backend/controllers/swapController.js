@@ -77,10 +77,15 @@ const getSwapRequests = async (req, res) => {
 // Get single swap by ID
 const getSwapById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, swapId } = req.params;
+    const lookupId = id || swapId;
     const userId = req.user._id;
 
-    const swap = await Swap.findById(id)
+    if (!lookupId) {
+      return res.status(400).json({ message: 'Swap ID missing in request path' });
+    }
+
+    const swap = await Swap.findById(lookupId)
       .populate('requester', 'username')
       .populate('recipient', 'username');
 
@@ -96,9 +101,11 @@ const getSwapById = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized to view this swap' });
     }
 
-    if (swap.status !== 'accepted' && swap.status !== 'completed') {
-      return res.status(400).json({ message: 'Swap not active yet' });
-    }
+    // Keep pending information; status enforcement is for UI display only.
+    // If you want block before acceptance, use frontend feedback to user instead.
+    // if (swap.status !== 'accepted' && swap.status !== 'completed') {
+    //   return res.status(400).json({ message: 'Swap not active yet' });
+    // }
 
     res.json(swap);
   } catch (error) {
