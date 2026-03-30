@@ -197,6 +197,42 @@
   background-color: #46b8da;
 }
 
+.btn-join {
+  background-color: #28a745;
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 12px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.btn-join:hover {
+  background-color: #218838;
+}
+
+.btn-review-link {
+  background-color: #007bff;
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 12px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.btn-review-link:hover {
+  background-color: #0069d9;
+}
+
 .completed-text {
   color: var(--light-text);
   font-style: italic;

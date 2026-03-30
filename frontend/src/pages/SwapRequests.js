@@ -47,9 +47,10 @@ const SwapRequests = ({ user, refreshUser }) => {
       });
       
       if (res.ok) {
-        // Update the local state
+        const updatedSwap = await res.json();
+        // Update the local state with meeting link and accepted status
         const updatedIncoming = swapRequests.incoming.map(swap => 
-          swap._id === swapId ? { ...swap, status: 'accepted' } : swap
+          swap._id === swapId ? { ...swap, status: 'accepted', meetingLink: updatedSwap.meetingLink } : swap
         );
         setSwapRequests({ ...swapRequests, incoming: updatedIncoming });
       } else {
@@ -226,6 +227,17 @@ const SwapRequests = ({ user, refreshUser }) => {
                       </>
                     )}
                     
+                    {swap.status === 'accepted' && swap.meetingLink && (
+                      <a
+                        href={swap.meetingLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-join"
+                      >
+                        Join Meeting
+                      </a>
+                    )}
+                    
                     {swap.status === 'accepted' && (
                       <button 
                         className="btn btn-complete"
@@ -237,7 +249,10 @@ const SwapRequests = ({ user, refreshUser }) => {
                     )}
                     
                     {swap.status === 'completed' && (
-                      <span className="completed-text">Swap completed</span>
+                      <>
+                        <span className="completed-text">Swap completed</span>
+                        <a href="/reviews" className="btn btn-review-link">Leave Review</a>
+                      </>
                     )}
                   </div>
                 </div>
@@ -287,6 +302,16 @@ const SwapRequests = ({ user, refreshUser }) => {
                   </div>
                   
                   <div className="request-actions">
+                    {swap.status === 'accepted' && swap.meetingLink && (
+                      <a
+                        href={swap.meetingLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-join"
+                      >
+                        Join Meeting
+                      </a>
+                    )}
                     {swap.status === 'accepted' && (
                       <button 
                         className="btn btn-complete"
@@ -298,7 +323,10 @@ const SwapRequests = ({ user, refreshUser }) => {
                     )}
                     
                     {swap.status === 'completed' && (
-                      <span className="completed-text">Swap completed</span>
+                      <>
+                        <span className="completed-text">Swap completed</span>
+                        <a href="/reviews" className="btn btn-review-link">Leave Review</a>
+                      </>
                     )}
                   </div>
                 </div>

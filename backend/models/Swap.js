@@ -24,6 +24,10 @@ const swapSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected', 'completed'],
     default: 'pending',
   },
+  meetingLink: {
+    type: String,
+    default: null,
+  },
   message: {
     type: String,
     default: '',
