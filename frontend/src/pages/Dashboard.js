@@ -58,7 +58,7 @@ const Dashboard = ({ user }) => {
   return (
     <div className="dashboard">
       <h1 className="dashboard-title">Welcome back, {user.username}!</h1>
-      <p className="dashboard-subtitle">Here's an overview of your SkillSwap activity</p>
+      <p className="dashboard-subtitle">Here's an overview of your TeachEach activity</p>
       
       <div className="stats-grid">
         <div className="stat-card">

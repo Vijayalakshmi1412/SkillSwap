@@ -14,8 +14,9 @@ const Navbar = ({ user, logout }) => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          SkillSwap
+          TeachEach
         </Link>
+        <div className="navbar-tagline">From One Mind to Another</div>
         
         <ul className="navbar-menu">
           <li className="navbar-item">

@@ -55,7 +55,7 @@ const Leaderboard = () => {
   return (
     <div className="leaderboard">
       <h1 className="leaderboard-title">Leaderboard</h1>
-      <p className="leaderboard-subtitle">Top contributors in the SkillSwap community</p>
+      <p className="leaderboard-subtitle">Top contributors in the TeachEach community</p>
       
       <div className="leaderboard-container">
         {users.length > 0 ? (

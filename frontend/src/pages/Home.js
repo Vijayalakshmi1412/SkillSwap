@@ -6,10 +6,10 @@ const Home = ({ user }) => {
   return (
     <div className="home">
       <div className="hero">
-        <h1 className="hero-title">SkillSwap</h1>
-        <p className="hero-subtitle">Exchange skills, grow together</p>
+        <h1 className="hero-title">TeachEach</h1>
+        <p className="hero-subtitle">From One Mind to Another</p>
         <p className="hero-description">
-          SkillSwap is an innovative platform for direct skill exchanges between individuals 
+          TeachEach is an innovative platform for direct skill exchanges between individuals 
           without monetary transactions. Learn new skills by teaching what you know!
         </p>
         
