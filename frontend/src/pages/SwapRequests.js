@@ -245,16 +245,14 @@ const SwapRequests = ({ user, refreshUser }) => {
                         >
                           Enter Room
                         </Link>
-                        {swap.meetingLink && (
-                          <a
-                            href={swap.meetingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-join"
-                          >
-                            Join Meeting
-                          </a>
-                        )}
+                        <a
+                          href={swap.meetingLink || `https://meet.jit.si/skillswap-${swap._id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-join"
+                        >
+                          Join Meeting
+                        </a>
                         <button 
                           className="btn btn-complete"
                           onClick={() => handleCompleteSwap(swap._id)}
@@ -334,16 +332,14 @@ const SwapRequests = ({ user, refreshUser }) => {
                         >
                           Enter Room
                         </Link>
-                        {swap.meetingLink && (
-                          <a
-                            href={swap.meetingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-join"
-                          >
-                            Join Meeting
-                          </a>
-                        )}
+                        <a
+                          href={swap.meetingLink || `https://meet.jit.si/skillswap-${swap._id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-join"
+                        >
+                          Join Meeting
+                        </a>
                         <button 
                           className="btn btn-complete"
                           onClick={() => handleCompleteSwap(swap._id)}

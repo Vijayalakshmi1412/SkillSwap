@@ -112,9 +112,9 @@ const SwapRoom = ({ user }) => {
       )}
 
       <div className="meeting-iframe"> 
-        {swap.meetingLink ? (
+        { (swap.meetingLink || `https://meet.jit.si/skillswap-${swap._id}`) ? (
           <iframe
-            src={swap.meetingLink}
+            src={swap.meetingLink || `https://meet.jit.si/skillswap-${swap._id}`}
             title="Swap Meeting"
             allow="camera; microphone; fullscreen; speaker; display-capture"
             style={{ width: '100%', height: '80vh', border: '0' }}

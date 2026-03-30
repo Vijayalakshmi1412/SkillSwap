@@ -62,7 +62,15 @@ const getSwapRequests = async (req, res) => {
       .populate('recipient', 'username')
       .sort({ createdAt: -1 });
 
-    // No meeting link generation here; meeting links come from accept route only
+    // Ensure accepted swaps have meeting links (fallback for old data where missing)
+    const ensureMeetingLink = async (swap) => {
+      if (swap.status === 'accepted' && !swap.meetingLink) {
+        swap.meetingLink = `https://meet.jit.si/skillswap-${swap._id}`;
+        await swap.save();
+      }
+    };
+
+    await Promise.all([...incomingRequests, ...outgoingRequests].map(ensureMeetingLink));
 
     res.json({
       incoming: incomingRequests,
@@ -91,6 +99,14 @@ const getSwapById = async (req, res) => {
 
     if (!swap) {
       return res.status(404).json({ message: 'Swap not found' });
+    }
+
+    // Ensure accepted swaps always provide a meeting link by generating a Jitsi room from ID.
+    if (swap.status === 'accepted' && !swap.meetingLink) {
+      swap.meetingLink = `https://meet.jit.si/skillswap-${swap._id}`;
+      await swap.save();
+      await swap.populate('requester', 'username');
+      await swap.populate('recipient', 'username');
     }
 
     // If requester/recipient are populated objects, compare _id; if plain ObjectId, they still have .toString()
