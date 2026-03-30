@@ -1,75 +1,64 @@
-# SkillSwap
+# 🚀 TeachEach
 
-A MERN (MongoDB, Express, React, Node.js) based application for skill exchange and learning.
+### 💡 *From One Mind to Another*
 
-## Project Structure
+---
 
-```
-skillswap/
-├── backend/          # Node.js/Express server
-│   ├── config/       # Database and JWT configuration
-│   ├── models/       # MongoDB schemas
-│   ├── routes/       # API routes
-│   ├── controllers/  # Route controllers
-│   ├── middleware/   # Express middleware
-│   ├── server.js     # Main server file
-│   └── package.json
-│
-├── frontend/         # React application
-│   ├── public/       # Static files
-│   ├── src/
-│   │   ├── pages/    # Page components
-│   │   ├── components/ # Reusable components
-│   │   ├── App.js
-│   │   └── index.js
-│   └── package.json
-│
-├── .gitignore
-└── README.md
-```
+## 📌 Overview
+**TeachEach** is a MERN stack-based web application that enables users to **learn and teach skills collaboratively without any monetary exchange**.
 
-## Getting Started
+The idea is inspired by real-life student experiences where friends share knowledge among themselves, making learning **simpler, faster, and more effective**.
 
-### Prerequisites
-- Node.js v14+
-- MongoDB
-- npm or yarn
+💡 *Teach What You Know, Learn What You Don’t.*
 
-### Installation
+---
 
-1. Install backend dependencies:
-```bash
-cd backend
-npm install
-```
+## 🎯 Key Features
+- 🔄 **Skill Exchange System** – Users can teach and learn from each other  
+- 👥 **Peer-to-Peer Learning** – Learn from real people, not just content  
+- 🧠 **Collaborative Knowledge Sharing**  
+- 👤 **User Profiles** – Add and showcase skills  
+- 🔍 **Skill Matching** – Find users with complementary skills  
+- 🎯 **No Payment Required** – Knowledge is the only currency  
 
-2. Install frontend dependencies:
-```bash
-cd frontend
-npm install
-```
+---
 
-### Running the Application
+## 🛠️ Tech Stack
 
-1. Start the backend server:
-```bash
-cd backend
-npm run dev
-```
+### Frontend
+- React.js  
+- CSS  
+- JavaScript  
 
-2. In a new terminal, start the frontend:
-```bash
-cd frontend
-npm start
-```
+### Backend
+- Node.js  
+- Express.js  
 
-## Features
-- User authentication and registration
-- Skill listing and management
-- Skill swap requests and processing
-- User reviews and ratings
-- Leaderboard system
-- User dashboard
+### Database
+- MongoDB  
 
-## License
-MIT
+### Tools
+- Git & GitHub  
+- VS Code  
+---
+
+### 🚀 Usage
+- Register/Login
+- Add your skills
+- Explore other users
+- Exchange knowledge
+- Learn and grow together 🎉
+---
+### 💡 Future Enhancements
+- 🤖 AI-based skill matching
+- 💬 Real-time chat system
+- 📅 Session scheduling
+- 🏆 Gamification (badges, points)
+- 📱 Mobile application
+---
+### 👩‍💻 Team Members
+- Reethu P
+- Vijayalakshmi SR
+- Sinduja D
+- Rajeshwari GB
+---
