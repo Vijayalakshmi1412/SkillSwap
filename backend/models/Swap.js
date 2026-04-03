@@ -21,13 +21,28 @@ const swapSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'accepted', 'rejected', 'completed'],
+    enum: ['pending', 'accepted', 'rejected', 'scheduled', 'completed'],
     default: 'pending',
+  },
+  message: {
+    type: String,
+    default: '',
+  },
+  // Scheduling fields
+  proposedTime: {
+    type: Date,
+  },
+  proposedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  confirmedTime: {
+    type: Date,
   },
   meetingLink: {
     type: String,
-    default: null,
   },
+  // Completion tracking
   requesterCompleted: {
     type: Boolean,
     default: false,
@@ -36,17 +51,32 @@ const swapSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  message: {
-    type: String,
-    default: '',
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
   completedDate: {
     type: Date,
   },
+  // Swap room data
+  notes: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    content: String,
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
+  chat: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    message: String,
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
 }, {
   timestamps: true,
 });

@@ -10,9 +10,9 @@ const Skills = ({ user }) => {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [requestForm, setRequestForm] = useState({
-    recipientId: '',
-    requesterSkill: '',
-    recipientSkill: '',
+    recipientId: '',  // Changed back to recipientId to match backend
+    requesterSkill: '', // Changed back to requesterSkill to match backend
+    recipientSkill: '', // Changed back to recipientSkill to match backend
     message: '',
   });
   const [requestError, setRequestError] = useState('');
@@ -67,9 +67,9 @@ const Skills = ({ user }) => {
   const openRequestModal = (recipient) => {
     setSelectedUser(recipient);
     setRequestForm({
-      recipientId: recipient._id,
-      requesterSkill: '',
-      recipientSkill: '',
+      recipientId: recipient._id,  // Changed back to recipientId
+      requesterSkill: '', // Changed back to requesterSkill
+      recipientSkill: '', // Changed back to recipientSkill
       message: '',
     });
     setRequestError('');
@@ -81,9 +81,9 @@ const Skills = ({ user }) => {
     setShowRequestModal(false);
     setSelectedUser(null);
     setRequestForm({
-      recipientId: '',
-      requesterSkill: '',
-      recipientSkill: '',
+      recipientId: '',  // Changed back to recipientId
+      requesterSkill: '', // Changed back to requesterSkill
+      recipientSkill: '', // Changed back to recipientSkill
       message: '',
     });
     setRequestError('');

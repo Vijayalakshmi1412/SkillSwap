@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Skills from './pages/Skills';
 import SwapRequests from './pages/SwapRequests';
+import ScheduleMeeting from './pages/ScheduleMeeting';
 import Reviews from './pages/Reviews';
 import Leaderboard from './pages/Leaderboard';
 import Credits from './pages/Credits';
@@ -103,6 +104,14 @@ function App() {
             element={
               <ProtectedRoute user={user}>
                 <SwapRequests user={user} refreshUser={fetchUserProfile} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/schedule-meeting/:swapId" 
+            element={
+              <ProtectedRoute user={user}>
+                <ScheduleMeeting user={user} />
               </ProtectedRoute>
             } 
           />
