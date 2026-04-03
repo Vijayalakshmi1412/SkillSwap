@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import './Navbar.css';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo2.png';
 
 const Navbar = ({ user, logout }) => {
   const navigate = useNavigate();
@@ -27,28 +27,28 @@ const Navbar = ({ user, logout }) => {
         <div className="navbar-right">
           <ul className="navbar-menu">
             <li className="navbar-item">
-              <Link to="/" className="navbar-link">Home</Link>
+              <NavLink to="/" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Home</NavLink>
             </li>
 
             {user ? (
               <>
                 <li className="navbar-item">
-                  <Link to="/dashboard" className="navbar-link">Dashboard</Link>
+                  <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Dashboard</NavLink>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/skills" className="navbar-link">Skills</Link>
+                  <NavLink to="/skills" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Skills</NavLink>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/swap-requests" className="navbar-link">Requests</Link>
+                  <NavLink to="/swap-requests" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Requests</NavLink>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/reviews" className="navbar-link">Reviews</Link>
+                  <NavLink to="/reviews" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Reviews</NavLink>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/leaderboard" className="navbar-link">Leaderboard</Link>
+                  <NavLink to="/leaderboard" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Leaderboard</NavLink>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/profile" className="navbar-link">Profile</Link>
+                  <NavLink to="/profile" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Profile</NavLink>
                 </li>
                 <li className="navbar-item">
                   <button onClick={handleLogout} className="navbar-btn">Logout</button>
@@ -57,10 +57,10 @@ const Navbar = ({ user, logout }) => {
             ) : (
               <>
                 <li className="navbar-item">
-                  <Link to="/login" className="navbar-link">Login</Link>
+                  <NavLink to="/login" className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}>Login</NavLink>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/register" className="navbar-btn">Register</Link>
+                  <NavLink to="/register" className={({ isActive }) => isActive ? 'navbar-btn active-btn' : 'navbar-btn'}>Register</NavLink>
                 </li>
               </>
             )}

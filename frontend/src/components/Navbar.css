@@ -1,128 +1,160 @@
+/* compact, flexbox-based navbar
+   - brand (logo + title) pinned to the extreme left (small padding)
+   - menu starts around the center and grows to the right
+   - reduced left/right whitespace and responsive adjustments
+*/
+
 .navbar {
   background-color: var(--primary);
   color: var(--white);
-  padding: 0 20px;
+  padding: 0;
   box-shadow: var(--shadow);
+  position: relative;
+  z-index: 1000;
 }
 
+/* Brand pinned to viewport left with minimal padding */
+.navbar-left {
+  position: absolute;
+  left: 60px;               /* minimal left padding */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 1100;
+  pointer-events: auto;
+}
+
+/* Keep brand compact */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+.navbar-logo-img { width: 44px; height: 44px; object-fit: contain; border-radius: 8px; }
+.navbar-text { display: flex; flex-direction: column; line-height: 1; }
+.navbar-logo { font-weight: 700; font-size: 1.5rem; color: var(--white); }
+.navbar-tagline { font-size: 0.80rem; color: rgba(255,255,255,0.9); margin-top: 2px; }
+
+/* Centered inner container with max-width.
+   We center the container, and allocate the center-right area to the menu
+   so menu items begin near the page center and extend to the right. */
 .navbar-container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0.5rem 1rem;
+  padding: 0 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center; /* center the inner content */
+  min-height: 64px;
+  gap: 0;
+  /* ensure brand doesn't overlap the content */
+  padding-left: 82px; /* ~ brand width (44) + text + small gap */
 }
 
-.navbar-logo {
-  font-weight: 700;
-  font-size: 2rem;
-  text-decoration: none;
+/* Menu area occupies the centered-to-right portion.
+   Adjust width (%) to move the menu start closer/further from center. */
+.navbar-right {
+  display: flex;
+  align-items: auto;
+  width: 60%;              /* controls where menu begins -- tweak if needed */
+  justify-content: flex-start; /* menu begins from the left edge of this area (near center) */
 }
 
-.navbar-tagline {
-  font-size: 0.75rem;
-  margin-top: 2px;
-}
-
+/* Menu itself: compact spacing */
 .navbar-menu {
   display: flex;
-  align-items: right;
+  gap: 50px;
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-.navbar-item {
-  margin-left: 20px;
-}
+.navbar-item { margin: 0; }
 
+/* Links / buttons */
 .navbar-link {
   color: var(--white);
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s;
+  font-weight: 700;
+  padding: 7px 10px;
+  border-radius: 6px;
+  transition: color 0.18s, background 0.12s;
 }
-
-.navbar-link:hover {
-  color: var(--accent);
-}
+.navbar-link:hover { color: var(--accent); background: rgba(255,255,255,0.03); }
 
 .navbar-btn {
   background-color: var(--accent);
   color: var(--white);
   border: none;
   border-radius: var(--border-radius);
-  padding: 8px 16px;
-  font-size: 16px;
+  padding: 7px 12px;
+  font-size: 18px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.18s;
   text-decoration: none;
 }
+.navbar-btn:hover { background-color: var(--dark-accent); }
 
-.navbar-btn:hover {
-  background-color: var(--dark-accent);
+/* active link visuals */
+.navbar-link.active,
+.navbar-link:active,
+.navbar-link[aria-current="page"] {
+  background: rgba(255,255,255,0.08);
+  color: var(--white);
+  font-weight: 800;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.06);
+  border-radius: 6px;
 }
 
-/* brand area */
-.navbar-left {
-  display: flex;
-  align-items: center;
+/* active style for button-like register (if active) */
+.navbar-btn.active-btn {
+  outline: 2px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
 }
 
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
+/* small focus polish for keyboard users */
+.navbar-link:focus,
+.navbar-btn:focus {
+  outline: 2px solid rgba(255,255,255,0.14);
+  outline-offset: 2px;
 }
 
-.navbar-logo-img {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  margin-right: 0.75rem;
-  flex-shrink: 0;
-}
+/* Remove leftover margins that caused excess whitespace */
+.navbar-item { margin-left: 0; }
 
-.navbar-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
+/* Responsive tweaks */
+@media (max-width: 1100px) {
+  .navbar-right { width: 66%; }
+  .navbar-container { padding-left: 80px; }
 }
-
-/* right side menu remains same, ensure alignment */
-.navbar-right {
-  display: flex;
-  align-items: center;
+@media (max-width: 920px) {
+  .navbar-container { padding-left: 72px; }
+  .navbar-logo-img { width: 40px; height: 40px; }
+  .navbar-tagline { display: none; }
+  .navbar-right { width: 72%; }
 }
-
-/* responsive */
 @media (max-width: 720px) {
-  .navbar-text {
-    display: none;
-  } /* show icon only on small screens */
-  .navbar-logo-img {
-    width: 36px;
-    height: 36px;
+  /* on small screens show compact bar: logo left, menu compact on right */
+  .navbar-container {
+    padding-left: 56px;   /* keep small offset so brand doesn't overlap */
+    padding-right: 12px;
+    justify-content: flex-end;
   }
+  .navbar-right {
+    width: auto;
+    justify-content: flex-end;
+  }
+  .navbar-text { display: none; } /* icon-only brand */
+  .navbar-menu { gap: 8px; flex-wrap: wrap; }
+  .navbar-link { padding: 6px 8px; font-size: 13px; }
+  .navbar-btn { padding: 6px 10px; font-size: 13px; }
 }
 
-@media (max-width: 768px) {
-  .navbar-container {
-    flex-direction: column;
-    height: auto;
-    padding: 10px 0;
-  }
-  
-  .navbar-menu {
-    margin-top: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .navbar-item {
-    margin: 5px 10px;
-  }
-}
+/* If you want the brand absolutely flush to the viewport edge, reduce .navbar-left left value
+   and reduce .navbar-container padding-left accordingly. */
