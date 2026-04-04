@@ -58,7 +58,8 @@ const Skills = ({ user }) => {
       setFilteredUsers(users);
     } else {
       const filtered = users.filter(u => 
-        u.skillsOffered.includes(skill) || u.skillsWanted.includes(skill)
+        (u.skillsOffered && u.skillsOffered.includes(skill)) || 
+        (u.skillsWanted && u.skillsWanted.includes(skill))
       );
       setFilteredUsers(filtered);
     }
@@ -168,7 +169,8 @@ const Skills = ({ user }) => {
               <div className="user-header">
                 <h3>{u.username}</h3>
                 <div className="user-rating">
-                  ⭐ {u.averageRating.toFixed(1)} ({u.totalRatings})
+                  {/* Safely handle undefined rating values */}
+                  ⭐ {u.averageRating ? u.averageRating.toFixed(1) : '0.0'} ({u.totalRatings || 0})
                 </div>
               </div>
               
@@ -180,7 +182,7 @@ const Skills = ({ user }) => {
                 <div className="skill-group">
                   <h4>Offers</h4>
                   <div className="skill-list">
-                    {u.skillsOffered.length > 0 ? (
+                    {u.skillsOffered && u.skillsOffered.length > 0 ? (
                       u.skillsOffered.map((skill, index) => (
                         <span key={index} className="skill-tag offered">{skill}</span>
                       ))
@@ -193,7 +195,7 @@ const Skills = ({ user }) => {
                 <div className="skill-group">
                   <h4>Wants</h4>
                   <div className="skill-list">
-                    {u.skillsWanted.length > 0 ? (
+                    {u.skillsWanted && u.skillsWanted.length > 0 ? (
                       u.skillsWanted.map((skill, index) => (
                         <span key={index} className="skill-tag wanted">{skill}</span>
                       ))
@@ -206,7 +208,7 @@ const Skills = ({ user }) => {
               
               <div className="user-footer">
                 <div className="user-availability">
-                  Availability: <span>{u.availability}</span>
+                  Availability: <span>{u.availability || 'Not specified'}</span>
                 </div>
                 <button 
                   className="btn btn-request"
@@ -249,7 +251,7 @@ const Skills = ({ user }) => {
                     className="form-control"
                   >
                     <option value="">Select a skill</option>
-                    {user.skillsOffered.map((skill, index) => (
+                    {user.skillsOffered && user.skillsOffered.map((skill, index) => (
                       <option key={index} value={skill}>{skill}</option>
                     ))}
                   </select>
@@ -265,7 +267,7 @@ const Skills = ({ user }) => {
                     className="form-control"
                   >
                     <option value="">Select a skill</option>
-                    {selectedUser.skillsOffered.map((skill, index) => (
+                    {selectedUser && selectedUser.skillsOffered && selectedUser.skillsOffered.map((skill, index) => (
                       <option key={index} value={skill}>{skill}</option>
                     ))}
                   </select>

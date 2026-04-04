@@ -557,6 +557,7 @@ const addNote = async (req, res) => {
     // Populate user details
     await swap.populate('notes.user', 'username');
 
+    // Return just the notes array, not the entire swap
     res.json(swap.notes);
   } catch (error) {
     console.error('Error adding note:', error);
@@ -593,6 +594,7 @@ const addChatMessage = async (req, res) => {
     // Populate user details
     await swap.populate('chat.user', 'username');
 
+    // Return just the chat array, not the entire swap
     res.json(swap.chat);
   } catch (error) {
     console.error('Error adding chat message:', error);

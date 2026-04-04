@@ -147,14 +147,16 @@ const SwapRoom = ({ user }) => {
       });
       
       if (res.ok) {
-        const data = await res.json();
+        // Instead of replacing the entire notes array, we need to get the updated swap
+        const updatedNotes = await res.json();
         setSwap(prev => ({
           ...prev,
-          notes: data
+          notes: updatedNotes
         }));
         setNoteInput('');
       } else {
-        setError('Failed to add note');
+        const errorData = await res.json();
+        setError(errorData.message || 'Failed to add note');
       }
     } catch (err) {
       console.error('Error adding note:', err);
@@ -179,14 +181,16 @@ const SwapRoom = ({ user }) => {
       });
       
       if (res.ok) {
-        const data = await res.json();
+        // Instead of replacing the entire chat array, we need to get the updated swap
+        const updatedChat = await res.json();
         setSwap(prev => ({
           ...prev,
-          chat: data
+          chat: updatedChat
         }));
         setChatInput('');
       } else {
-        setError('Failed to send message');
+        const errorData = await res.json();
+        setError(errorData.message || 'Failed to send message');
       }
     } catch (err) {
       console.error('Error sending message:', err);
@@ -391,7 +395,7 @@ const SwapRoom = ({ user }) => {
               {activeTab === 'chat' && (
                 <div className="chat-section">
                   <div className="chat-messages">
-                    {swap.chat.length > 0 ? (
+                    {swap.chat && swap.chat.length > 0 ? (
                       swap.chat.map((msg, index) => (
                         <div 
                           key={index} 
@@ -429,7 +433,7 @@ const SwapRoom = ({ user }) => {
               {activeTab === 'notes' && (
                 <div className="notes-section">
                   <div className="notes-list">
-                    {swap.notes.length > 0 ? (
+                    {swap.notes && swap.notes.length > 0 ? (
                       swap.notes.map((note, index) => (
                         <div key={index} className="note-item">
                           <div className="note-header">
@@ -493,7 +497,7 @@ const SwapRoom = ({ user }) => {
               {activeTab === 'chat' && (
                 <div className="chat-section">
                   <div className="chat-messages">
-                    {swap.chat.length > 0 ? (
+                    {swap.chat && swap.chat.length > 0 ? (
                       swap.chat.map((msg, index) => (
                         <div 
                           key={index} 
@@ -531,7 +535,7 @@ const SwapRoom = ({ user }) => {
               {activeTab === 'notes' && (
                 <div className="notes-section">
                   <div className="notes-list">
-                    {swap.notes.length > 0 ? (
+                    {swap.notes && swap.notes.length > 0 ? (
                       swap.notes.map((note, index) => (
                         <div key={index} className="note-item">
                           <div className="note-header">
@@ -607,7 +611,7 @@ const SwapRoom = ({ user }) => {
               <div className="notes-section">
                 <h3>Shared Notes</h3>
                 <div className="notes-list">
-                  {swap.notes.length > 0 ? (
+                  {swap.notes && swap.notes.length > 0 ? (
                     swap.notes.map((note, index) => (
                       <div key={index} className="note-item">
                         <div className="note-header">
@@ -638,7 +642,7 @@ const SwapRoom = ({ user }) => {
               <div className="chat-section">
                 <h3>Chat</h3>
                 <div className="chat-messages">
-                  {swap.chat.length > 0 ? (
+                  {swap.chat && swap.chat.length > 0 ? (
                     swap.chat.map((msg, index) => (
                       <div 
                         key={index} 
