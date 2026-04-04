@@ -77,9 +77,13 @@ const ScheduleMeeting = ({ user }) => {
     try {
       const token = localStorage.getItem('token');
       
+      // Convert local datetime to ISO string for the API
+      const localDateTime = new Date(form.proposedTime);
+      const isoDateTime = localDateTime.toISOString();
+      
       // Log the exact data being sent
       const requestData = {
-        proposedTime: form.proposedTime,
+        proposedTime: isoDateTime,
       };
       console.log('Sending request data:', requestData);
       

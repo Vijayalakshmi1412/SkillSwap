@@ -14,6 +14,7 @@ const SwapRoom = ({ user }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [meetingJoined, setMeetingJoined] = useState(false);
+  const [activeTab, setActiveTab] = useState('chat');
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -70,9 +71,11 @@ const SwapRoom = ({ user }) => {
             // Set up countdown
             setCountdown(confirmedTime);
             setTimeLeft(Math.floor((confirmedTime - now) / 1000));
+            setSessionStarted(false); // Explicitly set to false
           } else {
             // Time has passed, session can start
             setSessionStarted(true);
+            setCountdown(null);
           }
         } else if (data.status === 'accepted') {
           // For accepted swaps, we need to wait for scheduling
@@ -191,6 +194,28 @@ const SwapRoom = ({ user }) => {
     }
   };
 
+  const handleConfirmTime = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/swaps/${swapId}/confirm-time`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setSwap(data);
+      } else {
+        setError('Failed to confirm meeting time');
+      }
+    } catch (err) {
+      console.error('Error confirming meeting time:', err);
+      setError('Server error. Please try again.');
+    }
+  };
+
   const handleMarkCompleted = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -234,7 +259,9 @@ const SwapRoom = ({ user }) => {
       case 'accepted':
         return 'Swap request accepted! Waiting for meeting to be scheduled.';
       case 'scheduled':
-        if (countdown && timeLeft > 0) {
+        if (!swap.requesterConfirmed || !swap.recipientConfirmed) {
+          return 'Meeting time proposed. Waiting for confirmation from both parties.';
+        } else if (countdown && timeLeft > 0) {
           return `Meeting starts in ${formatTimeLeft(timeLeft)}`;
         } else if (!sessionStarted) {
           return 'Meeting time has arrived! You can now join the meeting.';
@@ -272,6 +299,14 @@ const SwapRoom = ({ user }) => {
 
   const otherUser = getOtherUser();
   const meetingLink = swap.meetingLink || `https://meet.jit.si/teacheach-${swap._id}`;
+  const canJoinMeeting = swap.status === 'scheduled' && 
+                       swap.requesterConfirmed && 
+                       swap.recipientConfirmed && 
+                       sessionStarted;
+  const needsConfirmation = swap.status === 'scheduled' && 
+                            (!swap.requesterConfirmed || !swap.recipientConfirmed);
+  const isRequester = swap.requester._id === user._id;
+  const hasConfirmed = isRequester ? swap.requesterConfirmed : swap.recipientConfirmed;
 
   return (
     <div className="swap-room">
@@ -304,16 +339,231 @@ const SwapRoom = ({ user }) => {
           </div>
         )}
 
-        {countdown && timeLeft > 0 && (
-          <div className="countdown-container">
-            <div className="countdown-timer">
-              <div className="countdown-label">Meeting starts in:</div>
-              <div className="countdown-time">{formatTimeLeft(timeLeft)}</div>
+        {needsConfirmation && (
+          <div className="confirmation-container">
+            <h3>Meeting Time Confirmation</h3>
+            <p>The meeting has been scheduled for: <strong>{new Date(swap.proposedTime).toLocaleString()}</strong></p>
+            <div className="confirmation-status">
+              <p>Confirmation status:</p>
+              <div className="confirmation-flags">
+                <span className={swap.requesterConfirmed ? 'confirmed' : 'pending'}>
+                  {swap.requester.username}: {swap.requesterConfirmed ? 'Confirmed' : 'Pending'}
+                </span>
+                <span className={swap.recipientConfirmed ? 'confirmed' : 'pending'}>
+                  {swap.recipient.username}: {swap.recipientConfirmed ? 'Confirmed' : 'Pending'}
+                </span>
+              </div>
+            </div>
+            
+            {!hasConfirmed && (
+              <button 
+                className="btn btn-confirm" 
+                onClick={handleConfirmTime}
+              >
+                Confirm Meeting Time
+              </button>
+            )}
+            
+            {hasConfirmed && (
+              <p className="confirmation-notice">You have confirmed this meeting time. Waiting for the other party to confirm.</p>
+            )}
+            
+            {/* Allow chat and notes even before meeting starts */}
+            <div className="pre-meeting-features">
+              <h3>Pre-Meeting Features</h3>
+              <p>You can use the chat and notes features before the meeting starts.</p>
+              
+              <div className="pre-meeting-tabs">
+                <button 
+                  className={`tab ${activeTab === 'chat' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('chat')}
+                >
+                  Chat
+                </button>
+                <button 
+                  className={`tab ${activeTab === 'notes' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('notes')}
+                >
+                  Notes
+                </button>
+              </div>
+              
+              {activeTab === 'chat' && (
+                <div className="chat-section">
+                  <div className="chat-messages">
+                    {swap.chat.length > 0 ? (
+                      swap.chat.map((msg, index) => (
+                        <div 
+                          key={index} 
+                          className={`chat-message ${msg.user._id === user._id ? 'own-message' : 'other-message'}`}
+                        >
+                          <div className="message-header">
+                            <span className="message-author">{msg.user.username}</span>
+                            <span className="message-time">
+                              {new Date(msg.timestamp).toLocaleTimeString()}
+                            </span>
+                          </div>
+                          <div className="message-content">{msg.message}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-messages">No messages yet. Start the conversation!</p>
+                    )}
+                    <div ref={chatEndRef} />
+                  </div>
+                  <form onSubmit={handleSendMessage} className="chat-form">
+                    <div className="chat-input-container">
+                      <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Type a message..."
+                        className="chat-input"
+                      />
+                      <button type="submit" className="btn btn-send">Send</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+              
+              {activeTab === 'notes' && (
+                <div className="notes-section">
+                  <div className="notes-list">
+                    {swap.notes.length > 0 ? (
+                      swap.notes.map((note, index) => (
+                        <div key={index} className="note-item">
+                          <div className="note-header">
+                            <span className="note-author">{note.user.username}</span>
+                            <span className="note-time">
+                              {new Date(note.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="note-content">{note.content}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-notes">No notes yet. Add your first note!</p>
+                    )}
+                  </div>
+                  <form onSubmit={handleAddNote} className="note-form">
+                    <textarea
+                      value={noteInput}
+                      onChange={(e) => setNoteInput(e.target.value)}
+                      placeholder="Add a note..."
+                      className="note-input"
+                      rows="3"
+                    />
+                    <button type="submit" className="btn btn-add-note">Add Note</button>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {sessionStarted && !meetingJoined && (
+        {swap.status === 'scheduled' && swap.requesterConfirmed && swap.recipientConfirmed && !sessionStarted && (
+          <div className="countdown-container">
+            <h3>Meeting Scheduled</h3>
+            <p>The meeting has been confirmed for: <strong>{new Date(swap.confirmedTime).toLocaleString()}</strong></p>
+            <div className="countdown-timer">
+              <div className="countdown-label">Meeting starts in:</div>
+              <div className="countdown-time">{formatTimeLeft(timeLeft)}</div>
+            </div>
+            
+            {/* Allow chat and notes during countdown */}
+            <div className="pre-meeting-features">
+              <h3>Pre-Meeting Features</h3>
+              <p>You can use the chat and notes features while waiting for the meeting to start.</p>
+              
+              <div className="pre-meeting-tabs">
+                <button 
+                  className={`tab ${activeTab === 'chat' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('chat')}
+                >
+                  Chat
+                </button>
+                <button 
+                  className={`tab ${activeTab === 'notes' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('notes')}
+                >
+                  Notes
+                </button>
+              </div>
+              
+              {activeTab === 'chat' && (
+                <div className="chat-section">
+                  <div className="chat-messages">
+                    {swap.chat.length > 0 ? (
+                      swap.chat.map((msg, index) => (
+                        <div 
+                          key={index} 
+                          className={`chat-message ${msg.user._id === user._id ? 'own-message' : 'other-message'}`}
+                        >
+                          <div className="message-header">
+                            <span className="message-author">{msg.user.username}</span>
+                            <span className="message-time">
+                              {new Date(msg.timestamp).toLocaleTimeString()}
+                            </span>
+                          </div>
+                          <div className="message-content">{msg.message}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-messages">No messages yet. Start the conversation!</p>
+                    )}
+                    <div ref={chatEndRef} />
+                  </div>
+                  <form onSubmit={handleSendMessage} className="chat-form">
+                    <div className="chat-input-container">
+                      <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Type a message..."
+                        className="chat-input"
+                      />
+                      <button type="submit" className="btn btn-send">Send</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+              
+              {activeTab === 'notes' && (
+                <div className="notes-section">
+                  <div className="notes-list">
+                    {swap.notes.length > 0 ? (
+                      swap.notes.map((note, index) => (
+                        <div key={index} className="note-item">
+                          <div className="note-header">
+                            <span className="note-author">{note.user.username}</span>
+                            <span className="note-time">
+                              {new Date(note.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="note-content">{note.content}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-notes">No notes yet. Add your first note!</p>
+                    )}
+                  </div>
+                  <form onSubmit={handleAddNote} className="note-form">
+                    <textarea
+                      value={noteInput}
+                      onChange={(e) => setNoteInput(e.target.value)}
+                      placeholder="Add a note..."
+                      className="note-input"
+                      rows="3"
+                    />
+                    <button type="submit" className="btn btn-add-note">Add Note</button>
+                  </form>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {canJoinMeeting && !meetingJoined && (
           <div className="join-meeting-container">
             <h3>Meeting is ready to start!</h3>
             <p>Click the button below to join the video meeting.</p>

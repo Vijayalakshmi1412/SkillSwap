@@ -1,12 +1,14 @@
 .swap-room {
   padding: 20px 0;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .swap-room-header {
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 25px;
   margin-bottom: 20px;
 }
 
@@ -14,42 +16,201 @@
   font-size: 32px;
   color: var(--primary);
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .swap-info h2 {
   font-size: 24px;
   color: var(--dark-accent);
   margin-bottom: 15px;
+  text-align: center;
 }
 
 .swap-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
 .skill-exchange {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 }
 
 .skill-item {
   background-color: var(--background);
-  padding: 10px 15px;
+  padding: 12px 20px;
   border-radius: var(--border-radius);
+  border: 1px solid #e9ecef;
+  font-size: 15px;
 }
 
 .swap-status {
   font-size: 16px;
   color: var(--light-text);
+  text-align: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
 }
 
 .swap-room-content {
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 25px;
+  min-height: 500px;
+}
+
+/* Confirmation Container Styles */
+.confirmation-container {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: var(--border-radius);
+  padding: 25px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.confirmation-container h3 {
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.confirmation-container p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.confirmation-status {
+  margin-bottom: 25px;
+}
+
+.confirmation-status p {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.confirmation-flags {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.confirmation-flags span {
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.confirmed {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.confirmation-notice {
+  font-style: italic;
+  color: var(--light-text);
+  margin-top: 15px;
+  font-size: 15px;
+}
+
+/* Base button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-confirm {
+  background-color: #17a2b8;
+  color: var(--white);
+}
+
+.btn-confirm:hover {
+  background-color: #138496;
+}
+
+.btn-join-meeting {
+  background-color: #28a745;
+  color: var(--white);
+  font-size: 18px;
+  padding: 15px 30px;
+  min-height: 50px;
+}
+
+.btn-join-meeting:hover {
+  background-color: #218838;
+}
+
+.btn-open-meeting {
+  background-color: #6f42c1;
+  color: var(--white);
+}
+
+.btn-open-meeting:hover {
+  background-color: #5a32a3;
+}
+
+.btn-add-note {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.btn-add-note:hover {
+  background-color: var(--dark-accent);
+}
+
+.btn-send {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.btn-send:hover {
+  background-color: var(--dark-accent);
+}
+
+.btn-complete {
+  background-color: #28a745;
+  color: var(--white);
+}
+
+.btn-complete:hover {
+  background-color: #218838;
 }
 
 .countdown-container {
@@ -60,8 +221,9 @@
 
 .countdown-timer {
   text-align: center;
-  background-color: var(--background);
-  padding: 20px;
+  background-color: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  padding: 25px;
   border-radius: var(--border-radius);
   min-width: 300px;
 }
@@ -69,19 +231,32 @@
 .countdown-label {
   font-size: 18px;
   color: var(--dark-accent);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .countdown-time {
   font-size: 36px;
   font-weight: bold;
   color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.meeting-time-details {
+  margin-top: 15px;
+}
+
+.meeting-time-details p {
+  font-size: 16px;
+  color: var(--light-text);
+  margin: 0;
 }
 
 .join-meeting-container {
   text-align: center;
   padding: 40px 20px;
-  background-color: var(--background);
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
   border-radius: var(--border-radius);
   margin-bottom: 30px;
 }
@@ -92,33 +267,17 @@
   margin-bottom: 15px;
 }
 
-.btn-join-meeting {
-  background-color: var(--primary);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 15px 30px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-join-meeting:hover {
-  background-color: var(--dark-accent);
-}
-
 .session-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
 .meeting-container {
-  border: 1px solid #eee;
+  border: 1px solid #dee2e6;
   border-radius: var(--border-radius);
   overflow: hidden;
+  background-color: var(--white);
 }
 
 .meeting-header {
@@ -126,8 +285,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background-color: var(--background);
-  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .meeting-header h3 {
@@ -136,40 +295,32 @@
   margin: 0;
 }
 
-.btn-open-meeting {
-  background-color: var(--accent);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 8px 15px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-open-meeting:hover {
-  background-color: var(--dark-accent);
-}
-
 .meeting-iframe {
   background-color: #000;
+  position: relative;
+}
+
+.meeting-iframe iframe {
+  width: 100%;
+  height: 400px;
+  border: 0;
 }
 
 .session-panel {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 25px;
 }
 
 .notes-section,
 .chat-section {
-  border: 1px solid #eee;
+  border: 1px solid #dee2e6;
   border-radius: var(--border-radius);
   padding: 20px;
   display: flex;
   flex-direction: column;
   height: 500px;
+  background-color: var(--white);
 }
 
 .notes-section h3,
@@ -178,7 +329,7 @@
   color: var(--primary);
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .notes-list,
@@ -186,10 +337,12 @@
   flex: 1;
   overflow-y: auto;
   margin-bottom: 15px;
+  padding-right: 5px;
 }
 
 .note-item {
-  background-color: var(--background);
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
   border-radius: var(--border-radius);
   padding: 15px;
   margin-bottom: 15px;
@@ -202,17 +355,18 @@
 }
 
 .note-author {
-  font-weight: bold;
+  font-weight: 600;
   color: var(--dark-accent);
 }
 
 .note-time {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--light-text);
 }
 
 .note-content {
   white-space: pre-wrap;
+  line-height: 1.5;
 }
 
 .no-notes,
@@ -220,7 +374,8 @@
   text-align: center;
   color: var(--light-text);
   font-style: italic;
-  padding: 20px;
+  padding: 30px 20px;
+  font-size: 15px;
 }
 
 .note-form {
@@ -232,25 +387,18 @@
 .note-input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ced4da;
   border-radius: var(--border-radius);
   resize: none;
   font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.3s;
 }
 
-.btn-add-note {
-  background-color: var(--accent);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  align-self: flex-end;
-}
-
-.btn-add-note:hover {
-  background-color: var(--dark-accent);
+.note-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .chat-message {
@@ -274,7 +422,7 @@
 }
 
 .message-author {
-  font-weight: bold;
+  font-weight: 600;
   color: var(--dark-accent);
   font-size: 14px;
 }
@@ -285,13 +433,14 @@
 }
 
 .message-content {
-  background-color: var(--background);
+  background-color: #f8f9fa;
   padding: 10px 15px;
   border-radius: var(--border-radius);
+  line-height: 1.4;
 }
 
 .own-message .message-content {
-  background-color: var(--accent);
+  background-color: var(--primary);
   color: var(--white);
 }
 
@@ -307,44 +456,23 @@
 .chat-input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ced4da;
   border-radius: var(--border-radius);
+  font-size: 14px;
+  transition: border-color 0.3s;
 }
 
-.btn-send {
-  background-color: var(--primary);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-send:hover {
-  background-color: var(--dark-accent);
+.chat-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .session-actions {
   display: flex;
   justify-content: center;
   padding: 20px 0;
-  border-top: 1px solid #eee;
-}
-
-.btn-complete {
-  background-color: #5cb85c;
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-complete:hover {
-  background-color: #4cae4c;
+  border-top: 1px solid #dee2e6;
 }
 
 .completion-message {
@@ -357,49 +485,16 @@
   margin-bottom: 15px;
 }
 
-.btn-review {
-  background-color: var(--primary);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-review:hover {
-  background-color: var(--dark-accent);
-}
-
 .status-message {
   text-align: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
 }
 
 .status-message p {
   font-size: 18px;
   color: var(--light-text);
   margin-bottom: 20px;
-}
-
-.btn-back {
-  background-color: var(--accent);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-back:hover {
-  background-color: var(--dark-accent);
+  line-height: 1.5;
 }
 
 .swap-room-loading,
@@ -411,6 +506,7 @@
   justify-content: center;
   min-height: 50vh;
   text-align: center;
+  padding: 20px;
 }
 
 .swap-room-error p,
@@ -420,24 +516,30 @@
   margin-bottom: 20px;
 }
 
-.btn {
-  background-color: var(--primary);
-  color: var(--white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn:hover {
-  background-color: var(--dark-accent);
-}
-
+/* Responsive design */
 @media (max-width: 768px) {
+  .swap-room {
+    padding: 10px;
+  }
+  
+  .swap-room-header,
+  .swap-room-content {
+    padding: 20px;
+  }
+  
+  .swap-room-header h1 {
+    font-size: 24px;
+  }
+  
+  .swap-info h2 {
+    font-size: 20px;
+  }
+  
+  .skill-exchange {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
   .session-panel {
     grid-template-columns: 1fr;
   }
@@ -447,14 +549,50 @@
     height: 400px;
   }
   
-  .skill-exchange {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
   .meeting-header {
     flex-direction: column;
     gap: 10px;
     text-align: center;
+  }
+  
+  .confirmation-flags {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .countdown-timer {
+    min-width: 250px;
+    padding: 20px;
+  }
+  
+  .countdown-time {
+    font-size: 28px;
+  }
+  
+  .btn-join-meeting {
+    font-size: 16px;
+    padding: 12px 24px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .swap-room-header,
+  .swap-room-content {
+    padding: 15px;
+  }
+  
+  .confirmation-container {
+    padding: 20px;
+  }
+  
+  .meeting-iframe iframe {
+    height: 300px;
+  }
+  
+  .notes-section,
+  .chat-section {
+    height: 350px;
+    padding: 15px;
   }
 }

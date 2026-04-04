@@ -130,6 +130,7 @@ const acceptSwapRequest = async (req, res) => {
 
     // Update swap status
     swap.status = 'accepted';
+    swap.detailedStatus = 'accepted-not-scheduled'; // Set detailed status
     await swap.save();
     console.log('✅ Swap request accepted successfully');
 
@@ -167,6 +168,7 @@ const rejectSwapRequest = async (req, res) => {
 
     // Update swap status
     swap.status = 'rejected';
+    swap.detailedStatus = 'rejected'; // Set detailed status
     await swap.save();
 
     // Populate user details
@@ -196,6 +198,34 @@ const scheduleMeeting = async (req, res) => {
     console.log('Request body:', req.body);
     console.log('User ID:', userId);
 
+    if (!proposedTime) {
+      console.log('❌ No proposed time provided');
+      return res.status(400).json({ message: 'Proposed time is required' });
+    }
+
+    // Validate and parse the proposedTime
+    let meetingTime;
+    try {
+      meetingTime = new Date(proposedTime);
+      console.log('Meeting time (Date object):', meetingTime);
+      
+      // Check if the date is valid
+      if (isNaN(meetingTime.getTime())) {
+        console.log('❌ Invalid date format');
+        return res.status(400).json({ message: 'Invalid date format. Please use a valid date and time.' });
+      }
+      
+      // Check if the date is in the future
+      const now = new Date();
+      if (meetingTime <= now) {
+        console.log('❌ Date is in the past');
+        return res.status(400).json({ message: 'Meeting time must be in the future.' });
+      }
+    } catch (error) {
+      console.log('❌ Error parsing date:', error);
+      return res.status(400).json({ message: 'Invalid date format. Please use a valid date and time.' });
+    }
+
     const swap = await Swap.findById(swapId);
     console.log('Found swap:', swap);
 
@@ -216,31 +246,26 @@ const scheduleMeeting = async (req, res) => {
       return res.status(400).json({ message: 'Swap request is not in accepted status' });
     }
 
-    // Validate proposedTime
-    if (!proposedTime) {
-      console.log('❌ No proposed time provided');
-      return res.status(400).json({ message: 'Proposed time is required' });
-    }
-
     console.log('✅ All validations passed, scheduling meeting...');
 
     // Update swap with proposed time
-    const meetingTime = new Date(proposedTime);
-    console.log('Meeting time (Date object):', meetingTime);
     console.log('Meeting time (ISO string):', meetingTime.toISOString());
     
     swap.proposedTime = meetingTime;
     swap.proposedBy = userId;
     swap.status = 'scheduled';
+    swap.detailedStatus = 'accepted-scheduled'; // Set detailed status
+    
+    // Reset confirmation flags when rescheduling
+    swap.requesterConfirmed = false;
+    swap.recipientConfirmed = false;
     
     console.log('Before save:', swap.toObject());
     await swap.save();
     console.log('After save:', swap.toObject());
 
-    // Generate meeting link
-    swap.meetingLink = `https://meet.jit.si/teacheach-${swap._id}`;
-    await swap.save();
-    console.log('✅ Meeting scheduled successfully');
+    // Do NOT generate meeting link yet - wait for both parties to confirm
+    console.log('✅ Meeting time proposed successfully');
 
     // Populate user details
     await swap.populate('requester', 'username');
@@ -267,6 +292,34 @@ const rescheduleMeeting = async (req, res) => {
 
     console.log('Rescheduling meeting for swap:', swapId, 'with new time:', proposedTime);
 
+    if (!proposedTime) {
+      console.log('❌ No proposed time provided');
+      return res.status(400).json({ message: 'Proposed time is required' });
+    }
+
+    // Validate and parse the proposedTime
+    let meetingTime;
+    try {
+      meetingTime = new Date(proposedTime);
+      console.log('Meeting time (Date object):', meetingTime);
+      
+      // Check if the date is valid
+      if (isNaN(meetingTime.getTime())) {
+        console.log('❌ Invalid date format');
+        return res.status(400).json({ message: 'Invalid date format. Please use a valid date and time.' });
+      }
+      
+      // Check if the date is in the future
+      const now = new Date();
+      if (meetingTime <= now) {
+        console.log('❌ Date is in the past');
+        return res.status(400).json({ message: 'Meeting time must be in the future.' });
+      }
+    } catch (error) {
+      console.log('❌ Error parsing date:', error);
+      return res.status(400).json({ message: 'Invalid date format. Please use a valid date and time.' });
+    }
+
     const swap = await Swap.findById(swapId);
 
     if (!swap) {
@@ -292,18 +345,17 @@ const rescheduleMeeting = async (req, res) => {
       return res.status(400).json({ message: 'Swap is already completed and cannot be rescheduled' });
     }
 
-    // Validate proposedTime
-    if (!proposedTime) {
-      console.log('No proposed time provided');
-      return res.status(400).json({ message: 'Proposed time is required' });
-    }
-
     // Update swap with new proposed time
-    const meetingTime = new Date(proposedTime);
     swap.proposedTime = meetingTime;
     swap.proposedBy = userId;
     swap.confirmedTime = undefined; // Reset confirmed time
+    
+    // Reset confirmation flags when rescheduling
+    swap.requesterConfirmed = false;
+    swap.recipientConfirmed = false;
+    
     swap.status = 'scheduled'; // Keep status as scheduled
+    swap.detailedStatus = 'accepted-scheduled'; // Update detailed status
     await swap.save();
     console.log('Meeting rescheduled successfully');
 
@@ -320,7 +372,57 @@ const rescheduleMeeting = async (req, res) => {
   }
 };
 
-// Respond to a proposed meeting time
+// Confirm meeting time (new endpoint)
+const confirmMeetingTime = async (req, res) => {
+  try {
+    const { swapId } = req.params;
+    const userId = req.user._id;
+
+    const swap = await Swap.findById(swapId);
+
+    if (!swap) {
+      return res.status(404).json({ message: 'Swap request not found' });
+    }
+
+    // Check if the user is part of the swap
+    if (swap.requester.toString() !== userId.toString() && swap.recipient.toString() !== userId.toString()) {
+      return res.status(401).json({ message: 'Not authorized to confirm this meeting time' });
+    }
+
+    // Check if swap is in scheduled status
+    if (swap.status !== 'scheduled') {
+      return res.status(400).json({ message: 'Meeting time has not been proposed yet' });
+    }
+
+    // Update confirmation flag based on user
+    if (swap.requester.toString() === userId.toString()) {
+      swap.requesterConfirmed = true;
+    } else {
+      swap.recipientConfirmed = true;
+    }
+
+    // If both parties have confirmed, set confirmed time and generate meeting link
+    if (swap.requesterConfirmed && swap.recipientConfirmed) {
+      swap.confirmedTime = swap.proposedTime;
+      swap.meetingLink = `https://meet.jit.si/teacheach-${swap._id}`;
+      swap.detailedStatus = 'accepted-confirmed';
+    }
+
+    await swap.save();
+
+    // Populate user details
+    await swap.populate('requester', 'username');
+    await swap.populate('recipient', 'username');
+    await swap.populate('proposedBy', 'username');
+
+    res.json(swap);
+  } catch (error) {
+    console.error('Error confirming meeting time:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Respond to a proposed meeting time (for negotiation)
 const respondToMeetingTime = async (req, res) => {
   try {
     const { swapId, accept, alternativeTime } = req.body;
@@ -344,15 +446,44 @@ const respondToMeetingTime = async (req, res) => {
 
     if (accept) {
       // Accept the proposed time
-      swap.confirmedTime = swap.proposedTime;
+      swap.requesterConfirmed = true;
+      
+      // If both parties have confirmed, set confirmed time and generate meeting link
+      if (swap.recipientConfirmed) {
+        swap.confirmedTime = swap.proposedTime;
+        swap.meetingLink = `https://meet.jit.si/teacheach-${swap._id}`;
+        swap.detailedStatus = 'accepted-confirmed';
+      }
     } else {
       // Reject and propose alternative time
       if (!alternativeTime) {
         return res.status(400).json({ message: 'Alternative time is required when rejecting a proposal' });
       }
       
-      swap.proposedTime = new Date(alternativeTime);
+      // Validate the alternative time
+      let meetingTime;
+      try {
+        meetingTime = new Date(alternativeTime);
+        
+        // Check if the date is valid
+        if (isNaN(meetingTime.getTime())) {
+          return res.status(400).json({ message: 'Invalid date format. Please use a valid date and time.' });
+        }
+        
+        // Check if the date is in the future
+        const now = new Date();
+        if (meetingTime <= now) {
+          return res.status(400).json({ message: 'Meeting time must be in the future.' });
+        }
+      } catch (error) {
+        return res.status(400).json({ message: 'Invalid date format. Please use a valid date and time.' });
+      }
+      
+      swap.proposedTime = meetingTime;
       swap.proposedBy = userId;
+      swap.requesterConfirmed = false;
+      swap.recipientConfirmed = false;
+      swap.detailedStatus = 'accepted-scheduled';
     }
 
     await swap.save();
@@ -365,44 +496,6 @@ const respondToMeetingTime = async (req, res) => {
     res.json(swap);
   } catch (error) {
     console.error('Error responding to meeting time:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-// Confirm meeting time (after negotiation)
-const confirmMeetingTime = async (req, res) => {
-  try {
-    const { swapId } = req.params;
-    const userId = req.user._id;
-
-    const swap = await Swap.findById(swapId);
-
-    if (!swap) {
-      return res.status(404).json({ message: 'Swap request not found' });
-    }
-
-    // Check if the user is the recipient
-    if (swap.recipient.toString() !== userId.toString()) {
-      return res.status(401).json({ message: 'Not authorized to confirm this meeting time' });
-    }
-
-    // Check if swap is in scheduled status
-    if (swap.status !== 'scheduled') {
-      return res.status(400).json({ message: 'Meeting time has not been proposed yet' });
-    }
-
-    // Confirm the proposed time
-    swap.confirmedTime = swap.proposedTime;
-    await swap.save();
-
-    // Populate user details
-    await swap.populate('requester', 'username');
-    await swap.populate('recipient', 'username');
-    await swap.populate('proposedBy', 'username');
-
-    res.json(swap);
-  } catch (error) {
-    console.error('Error confirming meeting time:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -548,6 +641,7 @@ const markSwapCompleted = async (req, res) => {
     // Check if both users have marked as completed
     if (swap.requesterCompleted && swap.recipientCompleted) {
       swap.status = 'completed';
+      swap.detailedStatus = 'accepted-completed'; // Update detailed status
       swap.completedDate = Date.now();
       
       // Update user stats

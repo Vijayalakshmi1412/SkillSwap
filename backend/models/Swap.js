@@ -24,6 +24,12 @@ const swapSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected', 'scheduled', 'completed'],
     default: 'pending',
   },
+  // More granular status tracking
+  detailedStatus: {
+    type: String,
+    enum: ['pending', 'accepted-not-scheduled', 'accepted-scheduled', 'accepted-confirmed', 'rejected', 'accepted-completed'],
+    default: 'pending',
+  },
   message: {
     type: String,
     default: '',
@@ -38,6 +44,15 @@ const swapSchema = new mongoose.Schema({
   },
   confirmedTime: {
     type: Date,
+  },
+  // Meeting confirmation fields
+  requesterConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  recipientConfirmed: {
+    type: Boolean,
+    default: false,
   },
   meetingLink: {
     type: String,
@@ -80,5 +95,28 @@ const swapSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+// Pre-save middleware to update detailedStatus based on status
+swapSchema.pre('save', function(next) {
+  if (this.status === 'pending') {
+    this.detailedStatus = 'pending';
+  } else if (this.status === 'accepted' && !this.proposedTime) {
+    this.detailedStatus = 'accepted-not-scheduled';
+  } else if (this.status === 'accepted' && this.proposedTime && !this.isFullyConfirmed()) {
+    this.detailedStatus = 'accepted-scheduled';
+  } else if (this.status === 'accepted' && this.proposedTime && this.isFullyConfirmed()) {
+    this.detailedStatus = 'accepted-confirmed';
+  } else if (this.status === 'rejected') {
+    this.detailedStatus = 'rejected';
+  } else if (this.status === 'completed') {
+    this.detailedStatus = 'accepted-completed';
+  }
+  next();
+});
+
+// Instance method to check if both parties have confirmed the meeting
+swapSchema.methods.isFullyConfirmed = function() {
+  return this.requesterConfirmed && this.recipientConfirmed;
+};
 
 module.exports = mongoose.model('Swap', swapSchema);
